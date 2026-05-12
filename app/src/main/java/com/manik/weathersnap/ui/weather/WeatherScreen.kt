@@ -51,7 +51,11 @@ fun WeatherScreen(
             }
         },
         floatingActionButton = {
-            if (weatherState is WeatherUiState.Success) {
+            AnimatedVisibility(
+                visible = weatherState is WeatherUiState.Success,
+                enter = androidx.compose.animation.scaleIn() + fadeIn(),
+                exit = androidx.compose.animation.scaleOut() + fadeOut()
+            ) {
                 ExtendedFloatingActionButton(
                     onClick = onCreateReport,
                     icon = { Icon(Icons.Default.Add, null) },
