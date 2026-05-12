@@ -1,0 +1,185 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.manik.weathersnap"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:4:5-67
+11-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:5:5-79
+12-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:5:22-76
+13    <uses-permission android:name="android.permission.CAMERA" />
+13-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:6:5-65
+13-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:6:22-62
+14
+15    <uses-feature
+15-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:7:5-85
+16        android:name="android.hardware.camera"
+16-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:7:19-57
+17        android:required="false" />
+17-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:7:58-82
+18
+19    <permission
+19-->[androidx.core:core:1.13.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/abd0f61a5e060154df57ae19fd72fa6e/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+20        android:name="com.manik.weathersnap.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+20-->[androidx.core:core:1.13.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/abd0f61a5e060154df57ae19fd72fa6e/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+21        android:protectionLevel="signature" />
+21-->[androidx.core:core:1.13.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/abd0f61a5e060154df57ae19fd72fa6e/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+22
+23    <uses-permission android:name="com.manik.weathersnap.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+23-->[androidx.core:core:1.13.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/abd0f61a5e060154df57ae19fd72fa6e/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+23-->[androidx.core:core:1.13.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/abd0f61a5e060154df57ae19fd72fa6e/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+24
+25    <application
+25-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:9:5-26:19
+26        android:name="com.manik.weathersnap.WeatherSnapApp"
+26-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:10:9-39
+27        android:allowBackup="true"
+27-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:11:9-35
+28        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+28-->[androidx.core:core:1.13.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/abd0f61a5e060154df57ae19fd72fa6e/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+29        android:debuggable="true"
+30        android:extractNativeLibs="false"
+31        android:icon="@mipmap/ic_launcher"
+31-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:12:9-43
+32        android:label="@string/app_name"
+32-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:13:9-41
+33        android:roundIcon="@mipmap/ic_launcher_round"
+33-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:14:9-54
+34        android:supportsRtl="true"
+34-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:15:9-35
+35        android:testOnly="true"
+36        android:theme="@android:style/Theme.Material.Light.NoActionBar" >
+36-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:16:9-72
+37        <activity
+37-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:17:9-25:20
+38            android:name="com.manik.weathersnap.MainActivity"
+38-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:18:13-41
+39            android:exported="true"
+39-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:19:13-36
+40            android:theme="@android:style/Theme.Material.Light.NoActionBar" >
+40-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:20:13-76
+41            <intent-filter>
+41-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:21:13-24:29
+42                <action android:name="android.intent.action.MAIN" />
+42-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:22:17-69
+42-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:22:25-66
+43
+44                <category android:name="android.intent.category.LAUNCHER" />
+44-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:23:17-77
+44-->/Users/maniktyagi/Desktop/WeatherSnap/app/src/main/AndroidManifest.xml:23:27-74
+45            </intent-filter>
+46        </activity>
+47        <activity
+47-->[androidx.compose.ui:ui-tooling-android:1.7.4] /Users/maniktyagi/.gradle/caches/8.13/transforms/5ac7b20eb7ecb33e8d30c10cdf689484/transformed/jetified-ui-tooling-release/AndroidManifest.xml:23:9-25:39
+48            android:name="androidx.compose.ui.tooling.PreviewActivity"
+48-->[androidx.compose.ui:ui-tooling-android:1.7.4] /Users/maniktyagi/.gradle/caches/8.13/transforms/5ac7b20eb7ecb33e8d30c10cdf689484/transformed/jetified-ui-tooling-release/AndroidManifest.xml:24:13-71
+49            android:exported="true" />
+49-->[androidx.compose.ui:ui-tooling-android:1.7.4] /Users/maniktyagi/.gradle/caches/8.13/transforms/5ac7b20eb7ecb33e8d30c10cdf689484/transformed/jetified-ui-tooling-release/AndroidManifest.xml:25:13-36
+50
+51        <service
+51-->[androidx.camera:camera-camera2:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/aced6c78b7c96254e15e7e6e8aeca8b9/transformed/jetified-camera-camera2-1.3.1/AndroidManifest.xml:24:9-33:19
+52            android:name="androidx.camera.core.impl.MetadataHolderService"
+52-->[androidx.camera:camera-camera2:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/aced6c78b7c96254e15e7e6e8aeca8b9/transformed/jetified-camera-camera2-1.3.1/AndroidManifest.xml:25:13-75
+53            android:enabled="false"
+53-->[androidx.camera:camera-camera2:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/aced6c78b7c96254e15e7e6e8aeca8b9/transformed/jetified-camera-camera2-1.3.1/AndroidManifest.xml:26:13-36
+54            android:exported="false" >
+54-->[androidx.camera:camera-camera2:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/aced6c78b7c96254e15e7e6e8aeca8b9/transformed/jetified-camera-camera2-1.3.1/AndroidManifest.xml:27:13-37
+55            <meta-data
+55-->[androidx.camera:camera-camera2:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/aced6c78b7c96254e15e7e6e8aeca8b9/transformed/jetified-camera-camera2-1.3.1/AndroidManifest.xml:30:13-32:89
+56                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+56-->[androidx.camera:camera-camera2:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/aced6c78b7c96254e15e7e6e8aeca8b9/transformed/jetified-camera-camera2-1.3.1/AndroidManifest.xml:31:17-103
+57                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+57-->[androidx.camera:camera-camera2:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/aced6c78b7c96254e15e7e6e8aeca8b9/transformed/jetified-camera-camera2-1.3.1/AndroidManifest.xml:32:17-86
+58        </service>
+59
+60        <provider
+60-->[androidx.emoji2:emoji2:1.3.0] /Users/maniktyagi/.gradle/caches/8.13/transforms/6351b09ef3d0ec2aef07d2b81ba50792/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:24:9-32:20
+61            android:name="androidx.startup.InitializationProvider"
+61-->[androidx.emoji2:emoji2:1.3.0] /Users/maniktyagi/.gradle/caches/8.13/transforms/6351b09ef3d0ec2aef07d2b81ba50792/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:25:13-67
+62            android:authorities="com.manik.weathersnap.androidx-startup"
+62-->[androidx.emoji2:emoji2:1.3.0] /Users/maniktyagi/.gradle/caches/8.13/transforms/6351b09ef3d0ec2aef07d2b81ba50792/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:26:13-68
+63            android:exported="false" >
+63-->[androidx.emoji2:emoji2:1.3.0] /Users/maniktyagi/.gradle/caches/8.13/transforms/6351b09ef3d0ec2aef07d2b81ba50792/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:27:13-37
+64            <meta-data
+64-->[androidx.emoji2:emoji2:1.3.0] /Users/maniktyagi/.gradle/caches/8.13/transforms/6351b09ef3d0ec2aef07d2b81ba50792/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:29:13-31:52
+65                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+65-->[androidx.emoji2:emoji2:1.3.0] /Users/maniktyagi/.gradle/caches/8.13/transforms/6351b09ef3d0ec2aef07d2b81ba50792/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:30:17-75
+66                android:value="androidx.startup" />
+66-->[androidx.emoji2:emoji2:1.3.0] /Users/maniktyagi/.gradle/caches/8.13/transforms/6351b09ef3d0ec2aef07d2b81ba50792/transformed/jetified-emoji2-1.3.0/AndroidManifest.xml:31:17-49
+67            <meta-data
+67-->[androidx.lifecycle:lifecycle-process:2.8.3] /Users/maniktyagi/.gradle/caches/8.13/transforms/8028fedaa4691c85279df222d7cb4571/transformed/jetified-lifecycle-process-2.8.3/AndroidManifest.xml:29:13-31:52
+68                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+68-->[androidx.lifecycle:lifecycle-process:2.8.3] /Users/maniktyagi/.gradle/caches/8.13/transforms/8028fedaa4691c85279df222d7cb4571/transformed/jetified-lifecycle-process-2.8.3/AndroidManifest.xml:30:17-78
+69                android:value="androidx.startup" />
+69-->[androidx.lifecycle:lifecycle-process:2.8.3] /Users/maniktyagi/.gradle/caches/8.13/transforms/8028fedaa4691c85279df222d7cb4571/transformed/jetified-lifecycle-process-2.8.3/AndroidManifest.xml:31:17-49
+70            <meta-data
+70-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+71                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+71-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+72                android:value="androidx.startup" />
+72-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+73        </provider>
+74
+75        <activity
+75-->[androidx.compose.ui:ui-test-manifest:1.7.4] /Users/maniktyagi/.gradle/caches/8.13/transforms/fef2d3f5fca63ebc610c30699ae8594f/transformed/jetified-ui-test-manifest-1.7.4/AndroidManifest.xml:23:9-25:39
+76            android:name="androidx.activity.ComponentActivity"
+76-->[androidx.compose.ui:ui-test-manifest:1.7.4] /Users/maniktyagi/.gradle/caches/8.13/transforms/fef2d3f5fca63ebc610c30699ae8594f/transformed/jetified-ui-test-manifest-1.7.4/AndroidManifest.xml:24:13-63
+77            android:exported="true" />
+77-->[androidx.compose.ui:ui-test-manifest:1.7.4] /Users/maniktyagi/.gradle/caches/8.13/transforms/fef2d3f5fca63ebc610c30699ae8594f/transformed/jetified-ui-test-manifest-1.7.4/AndroidManifest.xml:25:13-36
+78
+79        <service
+79-->[androidx.room:room-runtime:2.6.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/e8d227288e208891e14e59cfbe7b3920/transformed/room-runtime-2.6.1/AndroidManifest.xml:24:9-28:63
+80            android:name="androidx.room.MultiInstanceInvalidationService"
+80-->[androidx.room:room-runtime:2.6.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/e8d227288e208891e14e59cfbe7b3920/transformed/room-runtime-2.6.1/AndroidManifest.xml:25:13-74
+81            android:directBootAware="true"
+81-->[androidx.room:room-runtime:2.6.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/e8d227288e208891e14e59cfbe7b3920/transformed/room-runtime-2.6.1/AndroidManifest.xml:26:13-43
+82            android:exported="false" />
+82-->[androidx.room:room-runtime:2.6.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/e8d227288e208891e14e59cfbe7b3920/transformed/room-runtime-2.6.1/AndroidManifest.xml:27:13-37
+83
+84        <receiver
+84-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+85            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+85-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+86            android:directBootAware="false"
+86-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+87            android:enabled="true"
+87-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+88            android:exported="true"
+88-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+89            android:permission="android.permission.DUMP" >
+89-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+90            <intent-filter>
+90-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+91                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+91-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+91-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+92            </intent-filter>
+93            <intent-filter>
+93-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+94                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+94-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+94-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+95            </intent-filter>
+96            <intent-filter>
+96-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+97                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+97-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+97-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+98            </intent-filter>
+99            <intent-filter>
+99-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+100                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+100-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+100-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/maniktyagi/.gradle/caches/8.13/transforms/1d8a190389750c50486c30a4a213e07b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+101            </intent-filter>
+102        </receiver>
+103    </application>
+104
+105</manifest>

@@ -14,6 +14,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.manik.weathersnap.data.local.ReportEntity
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.shape.RoundedCornerShape
+import com.manik.weathersnap.ui.theme.SkyBlue
+import com.manik.weathersnap.utils.extensions.toFormattedDate
+import com.manik.weathersnap.ui.theme.SkyBlue
 import com.manik.weathersnap.utils.extensions.toFormattedDate
 
 @Composable
@@ -25,124 +31,84 @@ fun ReportCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = MaterialTheme.shapes.large,
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column {
-            // Image Header
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+        ) {
+            // Image Section
             AsyncImage(
                 model = report.imagePath,
                 contentDescription = "Weather Report Image",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
+                    .width(100.dp)
+                    .fillMaxHeight(),
                 contentScale = ContentScale.Crop
             )
 
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .weight(1f)
+            ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = report.cityName,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                Icons.Default.CalendarMonth,
-                                contentDescription = null,
-                                modifier = Modifier.size(14.dp),
-                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = dateString,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                            )
-                        }
-                    }
-                    
-                    Surface(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = MaterialTheme.shapes.small
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Default.Thermostat,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp),
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                            Text(
-                                text = "${report.temperature}°C",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
-                    }
+                    Text(
+                        text = report.cityName,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "${report.temperature}°",
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = SkyBlue
+                    )
                 }
+
+                Text(
+                    text = dateString,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White.copy(alpha = 0.5f)
+                )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Weather Details Row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    com.manik.weathersnap.ui.common.WeatherMetric(label = "Condition", value = report.condition)
-                    com.manik.weathersnap.ui.common.WeatherMetric(label = "Humidity", value = "${report.humidity}%")
-                    com.manik.weathersnap.ui.common.WeatherMetric(label = "Wind", value = "${report.windSpeed} km/h")
+                    com.manik.weathersnap.ui.common.WeatherMetric(
+                        label = "CONDITION",
+                        value = report.condition,
+                        labelColor = Color.White.copy(alpha = 0.3f),
+                        valueColor = Color.White
+                    )
+                    com.manik.weathersnap.ui.common.WeatherMetric(
+                        label = "HUMIDITY",
+                        value = "${report.humidity}%",
+                        labelColor = Color.White.copy(alpha = 0.3f),
+                        valueColor = Color.White
+                    )
                 }
 
                 if (report.notes.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Notes",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
                         text = report.notes,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(top = 2.dp)
-                    )
-                }
-
-                Divider(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    thickness = 0.5.dp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                )
-
-                // Compression Info
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(
-                        Icons.Default.Compress,
-                        contentDescription = null,
-                        modifier = Modifier.size(14.dp),
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "Compressed from ${report.originalImageSize} to ${report.compressedImageSize}",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.tertiary
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.7f),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }

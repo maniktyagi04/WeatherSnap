@@ -10,10 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.geometry.Offset
 import com.manik.weathersnap.domain.model.City
 import com.manik.weathersnap.domain.model.Weather
+import com.manik.weathersnap.ui.theme.SkyBlue
 
 @Composable
 fun WeatherCard(
@@ -21,93 +24,129 @@ fun WeatherCard(
     city: City,
     modifier: Modifier = Modifier
 ) {
-    val gradient = Brush.verticalGradient(
-        colors = listOf(
-            MaterialTheme.colorScheme.primaryContainer,
-            MaterialTheme.colorScheme.secondaryContainer
-        )
-    )
-
-    Card(
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        shape = RoundedCornerShape(32.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.9f)
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            .padding(16.dp)
     ) {
-        Column(
+        // Gradient Glow behind the card
+        Box(
             modifier = Modifier
-                .padding(24.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .matchParentSize()
+                .padding(12.dp)
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(SkyBlue.copy(alpha = 0.2f), Color.Transparent),
+                        center = androidx.compose.ui.geometry.Offset(200f, 100f)
+                    ),
+                    shape = RoundedCornerShape(32.dp)
+                )
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(32.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+            ),
+            border = androidx.compose.foundation.BorderStroke(
+                1.dp, 
+                Brush.linearGradient(listOf(Color.White.copy(alpha = 0.2f), Color.Transparent))
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
         ) {
-            Text(
-                text = city.name,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-            Text(
-                text = "${city.admin1 ?: ""}, ${city.country ?: ""}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
-            )
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Header: City and Country
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = city.name,
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "${city.admin1 ?: ""}, ${city.country ?: ""}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.White.copy(alpha = 0.6f)
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-            Text(
-                text = "${weather.temperature}°",
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontSize = 80.sp,
-                    fontWeight = FontWeight.Black
-                ),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+                // Main Temperature
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "${weather.temperature}",
+                        style = MaterialTheme.typography.displayLarge,
+                        color = Color.White
+                    )
+                    Text(
+                        text = "°",
+                        style = MaterialTheme.typography.displayLarge.copy(
+                            fontWeight = FontWeight.Light,
+                            color = SkyBlue
+                        )
+                    )
+                }
 
-            Text(
-                text = weather.weatherCondition,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+                Text(
+                    text = weather.weatherCondition.uppercase(),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.ExtraBold,
+                    letterSpacing = 2.sp,
+                    color = SkyBlue
+                )
 
-            Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(40.dp))
 
-                Surface(
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(24.dp)
+                // Metrics Grid
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Color.White.copy(alpha = 0.05f),
+                            RoundedCornerShape(24.dp)
+                        )
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Row(
+                    com.manik.weathersnap.ui.common.WeatherMetric(
+                        label = "HUMIDITY",
+                        value = "${weather.humidity}%",
+                        labelColor = Color.White.copy(alpha = 0.4f),
+                        valueColor = Color.White,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    )
+                    VerticalDivider(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        com.manik.weathersnap.ui.common.WeatherMetric(
-                            label = "Humidity",
-                            value = "${weather.humidity}%",
-                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
-                            valueColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        )
-                        com.manik.weathersnap.ui.common.WeatherMetric(
-                            label = "Wind",
-                            value = "${weather.windSpeed} km/h",
-                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
-                            valueColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        )
-                        com.manik.weathersnap.ui.common.WeatherMetric(
-                            label = "Pressure",
-                            value = "${weather.pressure.toInt()} hPa",
-                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
-                            valueColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        )
-                    }
+                            .height(40.dp)
+                            .width(1.dp),
+                        color = Color.White.copy(alpha = 0.1f)
+                    )
+                    com.manik.weathersnap.ui.common.WeatherMetric(
+                        label = "WIND",
+                        value = "${weather.windSpeed} km/h",
+                        labelColor = Color.White.copy(alpha = 0.4f),
+                        valueColor = Color.White,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    )
+                    VerticalDivider(
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(1.dp),
+                        color = Color.White.copy(alpha = 0.1f)
+                    )
+                    com.manik.weathersnap.ui.common.WeatherMetric(
+                        label = "PRESSURE",
+                        value = "${weather.pressure.toInt()} hPa",
+                        labelColor = Color.White.copy(alpha = 0.4f),
+                        valueColor = Color.White,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    )
                 }
             }
         }

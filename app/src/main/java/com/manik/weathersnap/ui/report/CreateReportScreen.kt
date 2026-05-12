@@ -9,18 +9,27 @@ import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.shape.RoundedCornerShape
 import com.manik.weathersnap.ui.report.components.ImagePreview
 import com.manik.weathersnap.ui.report.components.NotesInput
 import com.manik.weathersnap.ui.report.components.SizeChip
+import com.manik.weathersnap.ui.theme.SkyBlue
+import com.manik.weathersnap.ui.theme.MidnightBlue
+import com.manik.weathersnap.ui.theme.DeepIndigo
+import com.manik.weathersnap.ui.theme.SoftBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +56,6 @@ fun CreateReportScreen(
     LaunchedEffect(capturedImageUri?.value) {
         capturedImageUri?.value?.let { uriString ->
             viewModel.onImageCaptured(android.net.Uri.parse(uriString))
-            // Clear the value so it doesn't trigger again on configuration change
             navController.currentBackStackEntry?.savedStateHandle?.remove<String>("captured_image_uri")
         }
     }
@@ -59,148 +67,116 @@ fun CreateReportScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Create Report", fontWeight = FontWeight.Bold) },
+                title = { Text("CREATE REPORT", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, letterSpacing = 2.sp) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = SkyBlue)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
+                    containerColor = MidnightBlue
                 )
             )
-        },
-        bottomBar = {
-            Surface(
-                tonalElevation = 8.dp,
-                shadowElevation = 16.dp,
-                color = MaterialTheme.colorScheme.surface
-            ) {
-                Button(
-                    onClick = { viewModel.saveReport() },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp)
-                        .height(56.dp),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    enabled = !state.isSaving,
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-                ) {
-                    Crossfade(targetState = state.isSaving, label = "SaveButtonCrossfade") { isSaving ->
-                        if (isSaving) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(24.dp),
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                strokeWidth = 3.dp
-                            )
-                        } else {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Save, null)
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text("Publish Report", style = MaterialTheme.typography.titleMedium)
-                            }
-                        }
-                    }
-                }
-            }
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MidnightBlue)
                 .padding(padding)
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 24.dp)
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Weather Summary Header
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
-                ),
-                shape = RoundedCornerShape(24.dp)
+            // Weather Overview Chip
+            Surface(
+                modifier = Modifier.padding(vertical = 16.dp),
+                color = DeepIndigo,
+                shape = RoundedCornerShape(24.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.05f))
             ) {
                 Row(
-                    modifier = Modifier
-                        .padding(24.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.padding(20.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(text = state.cityName, style = MaterialTheme.typography.headlineSmall, color = Color.White)
+                        Text(text = state.condition, style = MaterialTheme.typography.bodyMedium, color = SkyBlue)
+                    }
+                    Text(text = "${state.temperature}°", style = MaterialTheme.typography.displayMedium, color = Color.White)
+                }
+            }
+
+            // Image Preview Area
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(32.dp))
+                    .background(DeepIndigo)
+                    .clickable { onNavigateToCamera() },
+                contentAlignment = Alignment.Center
+            ) {
+                if (state.imageUri != null) {
+                    ImagePreview(imageUri = state.imageUri)
+                    
+                    // Optimization Badge
+                    Surface(
+                        modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+                        color = MidnightBlue.copy(alpha = 0.8f),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
                         Text(
-                            text = state.cityName,
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                        Text(
-                            text = state.condition,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
+                            text = "OPTIMIZED",
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = SkyBlue,
+                            fontWeight = FontWeight.Bold
                         )
                     }
-                    Text(
-                        text = "${state.temperature}°",
-                        style = MaterialTheme.typography.displayMedium,
-                        fontWeight = FontWeight.Black,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
+                } else {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Default.AddAPhoto, null, modifier = Modifier.size(48.dp), tint = Color.White.copy(alpha = 0.2f))
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text("Tap to capture weather", color = Color.White.copy(alpha = 0.4f))
+                    }
                 }
             }
 
-            // Image Section
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(28.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-            ) {
-                ImagePreview(imageUri = state.imageUri)
-            }
-            
-            AnimatedVisibility(visible = state.imageUri != null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    SizeChip(label = "Raw", size = state.originalSize)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    SizeChip(
-                        label = "Optimized", 
-                        size = state.compressedSize, 
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.height(32.dp))
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            FilledTonalButton(
-                onClick = onNavigateToCamera,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp),
-                shape = MaterialTheme.shapes.large
-            ) {
-                Icon(Icons.Filled.AddAPhoto, null)
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(if (state.imageUri == null) "Capture Moment" else "Replace Photo")
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Notes Section
+            // Notes Input
             NotesInput(
                 notes = state.notes,
                 onNotesChange = { viewModel.onNotesChange(it) }
             )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            Button(
+                onClick = { viewModel.saveReport() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp),
+                shape = RoundedCornerShape(20.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = SkyBlue,
+                    disabledContainerColor = SoftBlue
+                ),
+                enabled = !state.isSaving && state.imageUri != null
+            ) {
+                Crossfade(targetState = state.isSaving, label = "SaveButtonCrossfade") { isSaving ->
+                    if (isSaving) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MidnightBlue)
+                    } else {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Save, null, tint = MidnightBlue)
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text("SAVE REPORT", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.ExtraBold, color = MidnightBlue)
+                        }
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(40.dp))
         }
@@ -212,3 +188,4 @@ fun CreateReportScreen(
         }
     }
 }
+

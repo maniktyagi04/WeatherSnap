@@ -59,7 +59,7 @@ fun SuggestionList(
                         },
                         modifier = Modifier.clickable { onCitySelected(city) }
                     )
-                    Divider(
+                    HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         thickness = 0.5.dp,
                         color = MaterialTheme.colorScheme.outlineVariant

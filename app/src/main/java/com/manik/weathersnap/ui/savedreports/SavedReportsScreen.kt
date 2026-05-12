@@ -40,28 +40,34 @@ fun SavedReportsScreen(
                 )
             )
         }
-    ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            Crossfade(targetState = state.isLoading, label = "LoadingCrossfade") { isLoading ->
-                if (isLoading) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(strokeWidth = 3.dp)
-                    }
-                } else if (state.reports.isEmpty()) {
-                    EmptyState()
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(20.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
-                    ) {
-                        items(state.reports) { report ->
-                            ReportCard(report = report)
-                        }
+    ) { innerPadding ->
+        Crossfade(
+            targetState = state.isLoading, 
+            label = "LoadingCrossfade",
+            modifier = Modifier.padding(innerPadding)
+        ) { isLoading ->
+            if (isLoading) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(strokeWidth = 3.dp)
+                }
+            } else if (state.reports.isEmpty()) {
+                EmptyState()
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        start = 20.dp,
+                        end = 20.dp,
+                        top = 16.dp,
+                        bottom = 32.dp // Extra bottom padding for visibility
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    items(
+                        items = state.reports,
+                        key = { it.id } // Use ID for better scrolling performance
+                    ) { report ->
+                        ReportCard(report = report)
                     }
                 }
             }

@@ -14,12 +14,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
 import com.manik.weathersnap.ui.weather.components.SuggestionList
 import com.manik.weathersnap.ui.weather.components.WeatherCard
 import com.manik.weathersnap.ui.weather.components.WeatherSearchBar
+import com.manik.weathersnap.ui.theme.SkyBlue
+import com.manik.weathersnap.ui.theme.MidnightBlue
+import com.manik.weathersnap.ui.theme.DeepIndigo
+import com.manik.weathersnap.ui.theme.SoftBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,20 +42,16 @@ fun WeatherScreen(
 
     Scaffold(
         topBar = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(top = 16.dp)
+            ) {
                 WeatherSearchBar(
                     query = searchState.query,
                     onQueryChange = { viewModel.onSearchQueryChange(it) },
                     onClearQuery = { viewModel.onSearchQueryChange("") }
                 )
-                if (searchState.query.length in 1..2) {
-                    Text(
-                        text = "Enter more than 2 letters to start city suggestions",
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier.padding(start = 32.dp, bottom = 8.dp),
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
             }
         },
         floatingActionButton = {
@@ -56,19 +60,26 @@ fun WeatherScreen(
                 enter = androidx.compose.animation.scaleIn() + fadeIn(),
                 exit = androidx.compose.animation.scaleOut() + fadeOut()
             ) {
-                ExtendedFloatingActionButton(
+                FloatingActionButton(
                     onClick = onCreateReport,
-                    icon = { Icon(Icons.Default.Add, null) },
-                    text = { Text("Create Report") },
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                    containerColor = SkyBlue,
+                    contentColor = MidnightBlue,
+                    shape = RoundedCornerShape(20.dp),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    Icon(Icons.Default.Add, null, modifier = Modifier.size(28.dp))
+                }
             }
         }
     ) { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(MidnightBlue, DeepIndigo)
+                    )
+                )
                 .padding(paddingValues)
         ) {
             // Main Content
@@ -84,7 +95,7 @@ fun WeatherScreen(
                 ) { state ->
                     when (state) {
                         is WeatherUiState.Idle -> {
-                            EmptyStateView("Search for a city to see weather data")
+                            EmptyStateView("Enter a city name above to check the weather")
                         }
                         is WeatherUiState.Loading -> {
                             LoadingView()
@@ -93,19 +104,31 @@ fun WeatherScreen(
                             ErrorView(state.message)
                         }
                         is WeatherUiState.Success -> {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(bottom = 80.dp)
+                            ) {
                                 WeatherCard(
                                     weather = state.weather,
                                     city = state.city
                                 )
-                                Spacer(modifier = Modifier.height(16.dp))
+                                
+                                Spacer(modifier = Modifier.height(24.dp))
+                                
                                 Button(
                                     onClick = onNavigateToReports,
-                                    modifier = Modifier.padding(16.dp)
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = SoftBlue
+                                    ),
+                                    shape = RoundedCornerShape(16.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 32.dp)
+                                        .height(56.dp)
                                 ) {
-                                    Icon(Icons.Default.List, null)
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text("View Reports")
+                                    Icon(Icons.Default.List, null, tint = SkyBlue)
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text("VIEW SAVED REPORTS", style = MaterialTheme.typography.titleMedium, color = SkyBlue)
                                 }
                             }
                         }
@@ -119,7 +142,7 @@ fun WeatherScreen(
                 isVisible = searchState.query.length >= 2,
                 onCitySelected = { city ->
                     viewModel.selectCity(city)
-                    viewModel.onSearchQueryChange("") // Clear search after selection
+                    viewModel.onSearchQueryChange("") 
                 },
                 modifier = Modifier.align(Alignment.TopCenter)
             )

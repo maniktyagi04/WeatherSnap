@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.manik.weathersnap.app-mergeDebugResources-70:/values-hdpi-v4/values-hdpi-v4.xml",
+            "map": [
+                {
+                    "source": "/Users/maniktyagi/.gradle/caches/8.13/transforms/f222a8fcadcd87d69f9889df0716b103/transformed/appcompat-1.6.1/res/values-hdpi-v4/values-hdpi-v4.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "6",
+                        "endColumns": "13",
+                        "endOffsets": "327"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.manik.weathersnap.app-mergeDebugResources-70:/values-h720dp-v13/values-h720dp-v13.xml",
+            "map": [
+                {
+                    "source": "/Users/maniktyagi/.gradle/caches/8.13/transforms/f222a8fcadcd87d69f9889df0716b103/transformed/appcompat-1.6.1/res/values-h720dp-v13/values-h720dp-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "66",
+                        "endOffsets": "117"
+                    }
+                }
+            ]
+        }
+    ]
+}
