@@ -11,7 +11,8 @@ import androidx.compose.ui.unit.dp
 fun SizeChip(
     label: String,
     size: String,
-    containerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.secondaryContainer
+    containerColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.secondaryContainer,
+    contentColor: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSecondaryContainer
 ) {
     Surface(
         color = containerColor,
@@ -22,7 +23,7 @@ fun SizeChip(
             text = "$label: $size",
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer
+            color = contentColor
         )
     }
 }

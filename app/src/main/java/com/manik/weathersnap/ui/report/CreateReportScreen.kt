@@ -15,6 +15,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.shape.RoundedCornerShape
 import com.manik.weathersnap.ui.report.components.ImagePreview
 import com.manik.weathersnap.ui.report.components.NotesInput
 import com.manik.weathersnap.ui.report.components.SizeChip
@@ -55,38 +58,48 @@ fun CreateReportScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("New Report") },
+            CenterAlignedTopAppBar(
+                title = { Text("Create Report", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         },
         bottomBar = {
             Surface(
-                tonalElevation = 3.dp,
-                shadowElevation = 8.dp
+                tonalElevation = 8.dp,
+                shadowElevation = 16.dp,
+                color = MaterialTheme.colorScheme.surface
             ) {
                 Button(
                     onClick = { viewModel.saveReport() },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    shape = MaterialTheme.shapes.large,
-                    enabled = !state.isSaving
+                        .padding(24.dp)
+                        .height(56.dp),
+                    shape = MaterialTheme.shapes.extraLarge,
+                    enabled = !state.isSaving,
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                 ) {
-                    if (state.isSaving) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(24.dp),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Icon(Icons.Default.Save, null)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Save Report")
+                    Crossfade(targetState = state.isSaving, label = "SaveButtonCrossfade") { isSaving ->
+                        if (isSaving) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                strokeWidth = 3.dp
+                            )
+                        } else {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Save, null)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text("Publish Report", style = MaterialTheme.typography.titleMedium)
+                            }
+                        }
                     }
                 }
             }
@@ -96,7 +109,7 @@ fun CreateReportScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 20.dp)
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -106,13 +119,13 @@ fun CreateReportScreen(
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f)
                 ),
-                shape = MaterialTheme.shapes.extraLarge
+                shape = RoundedCornerShape(24.dp)
             ) {
                 Row(
                     modifier = Modifier
-                        .padding(20.dp)
+                        .padding(24.dp)
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
@@ -120,49 +133,68 @@ fun CreateReportScreen(
                     Column {
                         Text(
                             text = state.cityName,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                         Text(
-                            text = "Current Conditions",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
+                            text = state.condition,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                         )
                     }
                     Text(
-                        text = "${state.temperature}°C",
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.Black
+                        text = "${state.temperature}°",
+                        style = MaterialTheme.typography.displayMedium,
+                        fontWeight = FontWeight.Black,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
             }
 
             // Image Section
-            ImagePreview(imageUri = state.imageUri)
-            
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.End
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(28.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
-                if (state.imageUri != null) {
-                    SizeChip(label = "Original", size = state.originalSize)
-                    SizeChip(label = "Compressed", size = state.compressedSize, containerColor = MaterialTheme.colorScheme.tertiaryContainer)
+                ImagePreview(imageUri = state.imageUri)
+            }
+            
+            AnimatedVisibility(visible = state.imageUri != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SizeChip(label = "Raw", size = state.originalSize)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    SizeChip(
+                        label = "Optimized", 
+                        size = state.compressedSize, 
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
                 }
             }
 
-            OutlinedButton(
+            Spacer(modifier = Modifier.height(8.dp))
+
+            FilledTonalButton(
                 onClick = onNavigateToCamera,
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.medium
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = MaterialTheme.shapes.large
             ) {
                 Icon(Icons.Filled.AddAPhoto, null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(if (state.imageUri == null) "Capture Photo" else "Retake Photo")
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(if (state.imageUri == null) "Capture Moment" else "Replace Photo")
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Notes Section
             NotesInput(
@@ -170,7 +202,7 @@ fun CreateReportScreen(
                 onNotesChange = { viewModel.onNotesChange(it) }
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 
