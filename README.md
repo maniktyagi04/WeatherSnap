@@ -84,8 +84,6 @@ Run tests using the following commands:
 - **Clean Project**: `./gradlew clean`
 - **Install Debug APK**: `./gradlew installDebug`
 
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 *Developed as a high-quality technical internship assignment.*
