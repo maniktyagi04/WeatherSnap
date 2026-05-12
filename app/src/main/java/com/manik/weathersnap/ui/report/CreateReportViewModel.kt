@@ -1,22 +1,16 @@
-package com.manik.weathersnap.ui.report
+import com.manik.weathersnap.data.local.ReportEntity
+import com.manik.weathersnap.domain.repository.WeatherRepository
+import com.manik.weathersnap.utils.ImageCompressor
 
-import android.net.Uri
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import javax.inject.Inject
-
+/**
+ * ViewModel for the report creation screen.
+ * Handles image compression, state management for weather metrics, and persistence.
+ */
 @HiltViewModel
 class CreateReportViewModel @Inject constructor(
     @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context,
-    private val imageCompressor: com.manik.weathersnap.utils.ImageCompressor,
-    private val repository: com.manik.weathersnap.domain.repository.WeatherRepository
+    private val imageCompressor: ImageCompressor,
+    private val repository: WeatherRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateReportUiState())

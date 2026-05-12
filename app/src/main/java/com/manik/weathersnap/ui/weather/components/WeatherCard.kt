@@ -76,38 +76,40 @@ fun WeatherCard(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            Surface(
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.1f),
-                shape = RoundedCornerShape(24.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                Surface(
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(24.dp)
                 ) {
-                    WeatherDetailItem("Humidity", "${weather.humidity}%")
-                    WeatherDetailItem("Wind", "${weather.windSpeed} km/h")
-                    WeatherDetailItem("Pressure", "${weather.pressure.toInt()} hPa")
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        com.manik.weathersnap.ui.common.WeatherMetric(
+                            label = "Humidity",
+                            value = "${weather.humidity}%",
+                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
+                            valueColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        )
+                        com.manik.weathersnap.ui.common.WeatherMetric(
+                            label = "Wind",
+                            value = "${weather.windSpeed} km/h",
+                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
+                            valueColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        )
+                        com.manik.weathersnap.ui.common.WeatherMetric(
+                            label = "Pressure",
+                            value = "${weather.pressure.toInt()} hPa",
+                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f),
+                            valueColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun WeatherDetailItem(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
     }
 }

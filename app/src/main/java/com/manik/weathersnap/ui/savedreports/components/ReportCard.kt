@@ -14,16 +14,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.manik.weathersnap.data.local.ReportEntity
-import java.text.SimpleDateFormat
-import java.util.*
+import com.manik.weathersnap.utils.extensions.toFormattedDate
 
 @Composable
 fun ReportCard(
     report: ReportEntity,
     modifier: Modifier = Modifier
 ) {
-    val dateFormatter = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
-    val dateString = dateFormatter.format(Date(report.timestamp))
+    val dateString = report.timestamp.toFormattedDate()
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -103,9 +101,9 @@ fun ReportCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    WeatherMetric(label = "Condition", value = report.condition)
-                    WeatherMetric(label = "Humidity", value = "${report.humidity}%")
-                    WeatherMetric(label = "Wind", value = "${report.windSpeed} km/h")
+                    com.manik.weathersnap.ui.common.WeatherMetric(label = "Condition", value = report.condition)
+                    com.manik.weathersnap.ui.common.WeatherMetric(label = "Humidity", value = "${report.humidity}%")
+                    com.manik.weathersnap.ui.common.WeatherMetric(label = "Wind", value = "${report.windSpeed} km/h")
                 }
 
                 if (report.notes.isNotEmpty()) {
@@ -149,21 +147,5 @@ fun ReportCard(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun WeatherMetric(label: String, value: String) {
-    Column {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodySmall,
-            fontWeight = FontWeight.Medium
-        )
     }
 }

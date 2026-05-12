@@ -76,10 +76,13 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Fetches current weather for the selected [city] and updates the UI state.
+     */
     fun selectCity(city: City) {
         viewModelScope.launch {
             _weatherUiState.value = WeatherUiState.Loading
-            repository.getWeatherData(city.latitude, city.longitude)
+            repository.getWeather(city.latitude, city.longitude)
                 .onSuccess { weather ->
                     _weatherUiState.value = WeatherUiState.Success(weather, city)
                 }

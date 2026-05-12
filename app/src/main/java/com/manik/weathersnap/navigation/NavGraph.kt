@@ -18,9 +18,13 @@ import com.manik.weathersnap.ui.weather.WeatherScreen
 import com.manik.weathersnap.ui.weather.WeatherUiState
 import com.manik.weathersnap.ui.weather.WeatherViewModel
 
+/**
+ * Sets up the central navigation graph for the application.
+ * Manages screen transitions and argument passing between modules.
+ */
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
-    val viewModel: WeatherViewModel = hiltViewModel()
+    val sharedWeatherViewModel: WeatherViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
@@ -28,14 +32,15 @@ fun SetupNavGraph(navController: NavHostController) {
         enterTransition = { fadeIn(animationSpec = tween(300)) },
         exitTransition = { fadeOut(animationSpec = tween(300)) }
     ) {
+        // Main Weather Display Screen
         composable(route = Routes.Weather.route) {
             WeatherScreen(
-                viewModel = viewModel,
+                viewModel = sharedWeatherViewModel,
                 onNavigateToReports = {
                     navController.navigate(Routes.SavedReports.route)
                 },
                 onCreateReport = {
-                    val state = viewModel.weatherUiState.value
+                    val state = sharedWeatherViewModel.weatherUiState.value
                     if (state is WeatherUiState.Success) {
                         navController.navigate(
                             Routes.CreateReport.createRoute(
@@ -52,6 +57,7 @@ fun SetupNavGraph(navController: NavHostController) {
             )
         }
 
+        // Report Creation Screen with parameter injection
         composable(
             route = Routes.CreateReport.route,
             arguments = listOf(
@@ -75,27 +81,36 @@ fun SetupNavGraph(navController: NavHostController) {
                 )
             }
         ) { backStackEntry ->
-            val cityName = backStackEntry.arguments?.getString("cityName") ?: ""
-            val temp = backStackEntry.arguments?.getString("temp") ?: ""
-            val humidity = backStackEntry.arguments?.getString("humidity") ?: ""
-            val windSpeed = backStackEntry.arguments?.getString("windSpeed") ?: ""
-            val pressure = backStackEntry.arguments?.getString("pressure") ?: ""
-            val condition = backStackEntry.arguments?.getString("condition") ?: ""
-
+            val args = backStackEntry.arguments
             CreateReportScreen(
-                cityName = cityName,
-                temp = temp,
-                humidity = humidity,
-                windSpeed = windSpeed,
-                pressure = pressure,
-                condition = condition,
+                cityName = args?.getString("cityName") ?: "",
+                temp = args?.getString("temp") ?: "",
+                humidity = args?.getString("humidity") ?: "",
+                windSpeed = args?.getString("windSpeed") ?: "",
+                pressure = args?.getString("pressure") ?: "",
+                condition = args?.getString("condition") ?: "",
                 onBack = { navController.popBackStack() },
                 onNavigateToCamera = { navController.navigate(Routes.Camera.route) },
                 navController = navController
             )
         }
 
-        composable(route = Routes.Camera.route) {
+        // Camera Capture Screen
+        composable(
+            route = Routes.Camera.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Up,
+                    animationSpec = tween(400)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Down,
+                    animationSpec = tween(400)
+                )
+            }
+        ) {
             CameraScreen(
                 onImageCaptured = { uri ->
                     navController.previousBackStackEntry
@@ -107,7 +122,22 @@ fun SetupNavGraph(navController: NavHostController) {
             )
         }
 
-        composable(route = Routes.SavedReports.route) {
+        // List of Saved Reports Screen
+        composable(
+            route = Routes.SavedReports.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(400)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(400)
+                )
+            }
+        ) {
             SavedReportsScreen(onBack = { navController.popBackStack() })
         }
     }
