@@ -13,7 +13,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateReportViewModel @Inject constructor() : ViewModel() {
+class CreateReportViewModel @Inject constructor(
+    @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context,
+    private val imageCompressor: com.manik.weathersnap.utils.ImageCompressor
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateReportUiState())
     val uiState: StateFlow<CreateReportUiState> = _uiState.asStateFlow()
@@ -27,13 +30,32 @@ class CreateReportViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onImageCaptured(uri: Uri) {
-        // Placeholder size calculation
-        _uiState.update { 
-            it.copy(
-                imageUri = uri,
-                originalSize = "2.4 MB",
-                compressedSize = "450 KB"
-            )
+        viewModelScope.launch {
+            val originalSize = imageCompressor.getFileSizeFromUri(context, uri)
+            
+            // Compress in background
+            val compressedFile = imageCompressor.compressImage(context, uri)
+            
+            if (compressedFile != null) {
+                val compressedSize = imageCompressor.getFileSize(compressedFile)
+                val compressedUri = Uri.fromFile(compressedFile)
+                
+                _uiState.update { 
+                    it.copy(
+                        imageUri = compressedUri,
+                        originalSize = originalSize,
+                        compressedSize = compressedSize
+                    )
+                }
+            } else {
+                _uiState.update { 
+                    it.copy(
+                        imageUri = uri,
+                        originalSize = originalSize,
+                        compressedSize = "N/A"
+                    )
+                }
+            }
         }
     }
 
