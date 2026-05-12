@@ -40,7 +40,11 @@ fun SetupNavGraph(navController: NavHostController) {
                         navController.navigate(
                             Routes.CreateReport.createRoute(
                                 cityName = state.city.name,
-                                temp = state.weather.temperature.toString()
+                                temp = state.weather.temperature.toString(),
+                                humidity = state.weather.humidity.toString(),
+                                windSpeed = state.weather.windSpeed.toString(),
+                                pressure = state.weather.pressure.toString(),
+                                condition = state.weather.weatherCondition
                             )
                         )
                     }
@@ -52,7 +56,11 @@ fun SetupNavGraph(navController: NavHostController) {
             route = Routes.CreateReport.route,
             arguments = listOf(
                 navArgument("cityName") { type = NavType.StringType },
-                navArgument("temp") { type = NavType.StringType }
+                navArgument("temp") { type = NavType.StringType },
+                navArgument("humidity") { type = NavType.StringType },
+                navArgument("windSpeed") { type = NavType.StringType },
+                navArgument("pressure") { type = NavType.StringType },
+                navArgument("condition") { type = NavType.StringType }
             ),
             enterTransition = {
                 slideIntoContainer(
@@ -69,9 +77,18 @@ fun SetupNavGraph(navController: NavHostController) {
         ) { backStackEntry ->
             val cityName = backStackEntry.arguments?.getString("cityName") ?: ""
             val temp = backStackEntry.arguments?.getString("temp") ?: ""
+            val humidity = backStackEntry.arguments?.getString("humidity") ?: ""
+            val windSpeed = backStackEntry.arguments?.getString("windSpeed") ?: ""
+            val pressure = backStackEntry.arguments?.getString("pressure") ?: ""
+            val condition = backStackEntry.arguments?.getString("condition") ?: ""
+
             CreateReportScreen(
                 cityName = cityName,
                 temp = temp,
+                humidity = humidity,
+                windSpeed = windSpeed,
+                pressure = pressure,
+                condition = condition,
                 onBack = { navController.popBackStack() },
                 onNavigateToCamera = { navController.navigate(Routes.Camera.route) },
                 navController = navController
