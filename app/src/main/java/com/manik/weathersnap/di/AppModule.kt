@@ -4,7 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import com.manik.weathersnap.data.local.WeatherDao
 import com.manik.weathersnap.data.local.WeatherDatabase
+import com.manik.weathersnap.data.remote.GeocodingApiService
 import com.manik.weathersnap.data.remote.WeatherApiService
+import com.manik.weathersnap.data.repository.WeatherRepositoryImpl
+import com.manik.weathersnap.domain.repository.WeatherRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,11 +34,29 @@ object AppModule {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("https://api.openweathermap.org/data/2.5/")
+            .baseUrl("https://api.open-meteo.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
             .create(WeatherApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeocodingApiService(): GeocodingApiService {
+        val logging = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+        val client = OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl("https://geocoding-api.open-meteo.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+            .create(GeocodingApiService::class.java)
     }
 
     @Provides
@@ -52,5 +73,14 @@ object AppModule {
     @Singleton
     fun provideWeatherDao(db: WeatherDatabase): WeatherDao {
         return db.dao
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherRepository(
+        weatherApi: WeatherApiService,
+        geocodingApi: GeocodingApiService
+    ): WeatherRepository {
+        return WeatherRepositoryImpl(weatherApi, geocodingApi)
     }
 }
