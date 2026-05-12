@@ -11,7 +11,8 @@ import javax.inject.Inject
 
 class WeatherRepositoryImpl @Inject constructor(
     private val weatherApi: WeatherApiService,
-    private val geocodingApi: GeocodingApiService
+    private val geocodingApi: GeocodingApiService,
+    private val reportDao: com.manik.weathersnap.data.local.ReportDao
 ) : WeatherRepository {
 
     override suspend fun searchCity(name: String): Result<List<City>> {
@@ -31,5 +32,15 @@ class WeatherRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override suspend fun saveReport(report: com.manik.weathersnap.data.local.ReportEntity) {
+        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            reportDao.insertReport(report)
+        }
+    }
+
+    override fun getAllReports(): kotlinx.coroutines.flow.Flow<List<com.manik.weathersnap.data.local.ReportEntity>> {
+        return reportDao.getAllReports()
     }
 }

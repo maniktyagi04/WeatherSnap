@@ -66,7 +66,9 @@ object AppModule {
             context,
             WeatherDatabase::class.java,
             "weather_db"
-        ).build()
+        )
+        .fallbackToDestructiveMigration()
+        .build()
     }
 
     @Provides
@@ -77,10 +79,17 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideReportDao(db: WeatherDatabase): com.manik.weathersnap.data.local.ReportDao {
+        return db.reportDao
+    }
+
+    @Provides
+    @Singleton
     fun provideWeatherRepository(
         weatherApi: WeatherApiService,
-        geocodingApi: GeocodingApiService
+        geocodingApi: GeocodingApiService,
+        reportDao: com.manik.weathersnap.data.local.ReportDao
     ): WeatherRepository {
-        return WeatherRepositoryImpl(weatherApi, geocodingApi)
+        return WeatherRepositoryImpl(weatherApi, geocodingApi, reportDao)
     }
 }
