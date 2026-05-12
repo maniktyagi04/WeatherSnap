@@ -5,6 +5,10 @@ import android.net.Uri
 data class CreateReportUiState(
     val cityName: String = "",
     val temperature: String = "",
+    val humidity: String = "",
+    val windSpeed: String = "",
+    val pressure: String = "",
+    val condition: String = "",
     val notes: String = "",
     val imageUri: Uri? = null,
     val originalSize: String = "0 KB",

@@ -24,6 +24,10 @@ import com.manik.weathersnap.ui.report.components.SizeChip
 fun CreateReportScreen(
     cityName: String,
     temp: String,
+    humidity: String,
+    windSpeed: String,
+    pressure: String,
+    condition: String,
     onBack: () -> Unit,
     onNavigateToCamera: () -> Unit,
     navController: androidx.navigation.NavHostController,
@@ -45,8 +49,8 @@ fun CreateReportScreen(
         }
     }
 
-    LaunchedEffect(cityName, temp) {
-        viewModel.initData(cityName, temp)
+    LaunchedEffect(cityName, temp, humidity, windSpeed, pressure, condition) {
+        viewModel.initData(cityName, temp, humidity, windSpeed, pressure, condition)
     }
 
     Scaffold(

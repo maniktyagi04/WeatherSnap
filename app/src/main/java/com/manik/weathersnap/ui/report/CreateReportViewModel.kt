@@ -15,14 +15,31 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateReportViewModel @Inject constructor(
     @dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context,
-    private val imageCompressor: com.manik.weathersnap.utils.ImageCompressor
+    private val imageCompressor: com.manik.weathersnap.utils.ImageCompressor,
+    private val repository: com.manik.weathersnap.domain.repository.WeatherRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateReportUiState())
     val uiState: StateFlow<CreateReportUiState> = _uiState.asStateFlow()
 
-    fun initData(cityName: String, temp: String) {
-        _uiState.update { it.copy(cityName = cityName, temperature = temp) }
+    fun initData(
+        cityName: String,
+        temp: String,
+        humidity: String,
+        windSpeed: String,
+        pressure: String,
+        condition: String
+    ) {
+        _uiState.update {
+            it.copy(
+                cityName = cityName,
+                temperature = temp,
+                humidity = humidity,
+                windSpeed = windSpeed,
+                pressure = pressure,
+                condition = condition
+            )
+        }
     }
 
     fun onNotesChange(newNotes: String) {
@@ -60,9 +77,26 @@ class CreateReportViewModel @Inject constructor(
     }
 
     fun saveReport() {
+        val state = _uiState.value
         viewModelScope.launch {
             _uiState.update { it.copy(isSaving = true) }
-            delay(1500) // Simulate saving
+            
+            val report = com.manik.weathersnap.data.local.ReportEntity(
+                cityName = state.cityName,
+                temperature = state.temperature,
+                humidity = state.humidity,
+                windSpeed = state.windSpeed,
+                pressure = state.pressure,
+                condition = state.condition,
+                notes = state.notes,
+                imagePath = state.imageUri?.toString() ?: "",
+                originalImageSize = state.originalSize,
+                compressedImageSize = state.compressedSize,
+                timestamp = System.currentTimeMillis()
+            )
+            
+            repository.saveReport(report)
+            
             _uiState.update { it.copy(isSaving = false, isSuccess = true) }
         }
     }
