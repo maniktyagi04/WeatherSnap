@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.livedata.observeAsState
 import com.manik.weathersnap.ui.report.components.ImagePreview
 import com.manik.weathersnap.ui.report.components.NotesInput
 import com.manik.weathersnap.ui.report.components.SizeChip
@@ -25,10 +26,24 @@ fun CreateReportScreen(
     temp: String,
     onBack: () -> Unit,
     onNavigateToCamera: () -> Unit,
+    navController: androidx.navigation.NavHostController,
     viewModel: CreateReportViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
+
+    val capturedImageUri = navController.currentBackStackEntry
+        ?.savedStateHandle
+        ?.getLiveData<String>("captured_image_uri")
+        ?.observeAsState()
+
+    LaunchedEffect(capturedImageUri?.value) {
+        capturedImageUri?.value?.let { uriString ->
+            viewModel.onImageCaptured(android.net.Uri.parse(uriString))
+            // Clear the value so it doesn't trigger again on configuration change
+            navController.currentBackStackEntry?.savedStateHandle?.remove<String>("captured_image_uri")
+        }
+    }
 
     LaunchedEffect(cityName, temp) {
         viewModel.initData(cityName, temp)

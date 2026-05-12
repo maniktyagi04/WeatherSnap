@@ -73,12 +73,21 @@ fun SetupNavGraph(navController: NavHostController) {
                 cityName = cityName,
                 temp = temp,
                 onBack = { navController.popBackStack() },
-                onNavigateToCamera = { navController.navigate(Routes.Camera.route) }
+                onNavigateToCamera = { navController.navigate(Routes.Camera.route) },
+                navController = navController
             )
         }
 
         composable(route = Routes.Camera.route) {
-            CameraScreen(onBack = { navController.popBackStack() })
+            CameraScreen(
+                onImageCaptured = { uri ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("captured_image_uri", uri.toString())
+                    navController.popBackStack()
+                },
+                onBack = { navController.popBackStack() }
+            )
         }
 
         composable(route = Routes.SavedReports.route) {
