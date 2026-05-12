@@ -2,10 +2,19 @@ package com.manik.weathersnap.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Light Theme Colors
+val SkyBluePrimary = Color(0xFF006494)
+val SkyBlueSecondary = Color(0xFF13293D)
+val SkyBlueTertiary = Color(0xFF247BA0)
+val SkyBlueBackground = Color(0xFFF8FBFF)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Dark Theme Colors
+val DarkBluePrimary = Color(0xFF8BCCFF)
+val DarkBlueSecondary = Color(0xFFB0C9E0)
+val DarkBlueTertiary = Color(0xFF96CCEB)
+val DarkBlueBackground = Color(0xFF001D31)
+
+// Status Colors
+val ErrorRed = Color(0xFFBA1A1A)
+val SuccessGreen = Color(0xFF006D3B)
+val InfoBlue = Color(0xFF0061A4)
