@@ -5,32 +5,25 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.manik.weathersnap.ui.weather.SearchScreen
 import com.manik.weathersnap.ui.weather.WeatherScreen
 import com.manik.weathersnap.ui.weather.WeatherViewModel
 
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
-    // Shared ViewModel for search and weather screens
     val viewModel: WeatherViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
-        startDestination = Routes.Search.route
+        startDestination = Routes.Weather.route // Starting directly on WeatherScreen now
     ) {
-        composable(route = Routes.Search.route) {
-            SearchScreen(
-                viewModel = viewModel,
-                onNavigateToWeather = {
-                    navController.navigate(Routes.Weather.route)
-                }
-            )
-        }
         composable(route = Routes.Weather.route) {
             WeatherScreen(
                 viewModel = viewModel,
-                onBack = {
-                    navController.popBackStack()
+                onNavigateToReports = {
+                    // Placeholder for now
+                },
+                onCreateReport = {
+                    // Placeholder for now
                 }
             )
         }
