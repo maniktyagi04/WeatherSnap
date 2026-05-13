@@ -1,6 +1,5 @@
 package com.manik.weathersnap.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,14 +15,11 @@ import com.manik.weathersnap.ui.edit.EditReportScreen
 import com.manik.weathersnap.ui.report.CreateReportScreen
 import com.manik.weathersnap.ui.savedreports.SavedReportsScreen
 import com.manik.weathersnap.ui.trash.TrashScreen
+import com.manik.weathersnap.ui.weather.WeatherDetailsScreen
 import com.manik.weathersnap.ui.weather.WeatherScreen
 import com.manik.weathersnap.ui.weather.WeatherUiState
 import com.manik.weathersnap.ui.weather.WeatherViewModel
 
-/**
- * Sets up the central navigation graph for the application.
- * Manages screen transitions and argument passing between modules.
- */
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
     val sharedWeatherViewModel: WeatherViewModel = hiltViewModel()
@@ -34,12 +30,32 @@ fun SetupNavGraph(navController: NavHostController) {
         enterTransition = { fadeIn(animationSpec = tween(300)) },
         exitTransition = { fadeOut(animationSpec = tween(300)) }
     ) {
-        // Main Weather Display Screen
+        // Main Home Dashboard
         composable(route = Routes.Weather.route) {
             WeatherScreen(
                 viewModel = sharedWeatherViewModel,
                 onNavigateToReports = {
                     navController.navigate(Routes.SavedReports.route)
+                },
+                onNavigateToTrash = {
+                    navController.navigate(Routes.Trash.route)
+                },
+                onNavigateToEditReport = { id ->
+                    navController.navigate(Routes.EditReport.createRoute(id))
+                },
+                onNavigateToWeatherDetails = {
+                    navController.navigate(Routes.WeatherDetails.route)
+                }
+            )
+        }
+
+        // Dedicated Weather Details Screen
+        composable(route = Routes.WeatherDetails.route) {
+            WeatherDetailsScreen(
+                viewModel = sharedWeatherViewModel,
+                onBack = { 
+                    navController.popBackStack()
+                    sharedWeatherViewModel.resetToIdle()
                 },
                 onCreateReport = {
                     val state = sharedWeatherViewModel.weatherUiState.value
@@ -55,17 +71,11 @@ fun SetupNavGraph(navController: NavHostController) {
                             )
                         )
                     }
-                },
-                onNavigateToTrash = {
-                    navController.navigate(Routes.Trash.route)
-                },
-                onNavigateToEditReport = { id ->
-                    navController.navigate(Routes.EditReport.createRoute(id))
                 }
             )
         }
 
-        // Report Creation Screen with parameter injection
+        // Report Creation Screen
         composable(
             route = Routes.CreateReport.route,
             arguments = listOf(
@@ -106,7 +116,7 @@ fun SetupNavGraph(navController: NavHostController) {
             )
         }
 
-        // Camera Capture Screen
+        // Camera Screen
         composable(route = Routes.Camera.route) {
             CameraScreen(
                 onImageCaptured = { uri ->
@@ -119,10 +129,10 @@ fun SetupNavGraph(navController: NavHostController) {
             )
         }
 
+        // Saved Reports Screen
         composable(route = Routes.SavedReports.route) {
             SavedReportsScreen(
                 onBack = {
-                    sharedWeatherViewModel.resetToIdle()
                     navController.popBackStack()
                 },
                 onEditReport = { id ->
@@ -131,7 +141,7 @@ fun SetupNavGraph(navController: NavHostController) {
             )
         }
 
-        // Trash / Recently Deleted Screen
+        // Trash Screen
         composable(route = Routes.Trash.route) {
             TrashScreen(
                 onBack = { navController.popBackStack() }

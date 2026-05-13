@@ -2,6 +2,7 @@ package com.manik.weathersnap.navigation
 
 sealed class Routes(val route: String) {
     data object Weather : Routes("weather")
+    data object WeatherDetails : Routes("weather_details")
     
     data object CreateReport : Routes("create_report/{cityName}/{temp}/{humidity}/{windSpeed}/{pressure}/{condition}") {
         fun createRoute(
@@ -19,8 +20,6 @@ sealed class Routes(val route: String) {
     }
     
     data object Camera : Routes("camera")
-    
     data object SavedReports : Routes("saved_reports")
-    
     data object Trash : Routes("trash")
 }
