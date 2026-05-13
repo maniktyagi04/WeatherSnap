@@ -118,7 +118,11 @@ fun CreateReportScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (state.imageUri != null) {
-                    ImagePreview(imageUri = state.imageUri)
+                    ImagePreview(
+                        imageUri = state.imageUri,
+                        originalSize = state.originalSize,
+                        compressedSize = state.compressedSize
+                    )
                     
                     // Optimization Badge
                     Surface(
