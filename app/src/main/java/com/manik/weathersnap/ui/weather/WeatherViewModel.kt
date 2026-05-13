@@ -52,7 +52,7 @@ class WeatherViewModel @Inject constructor(
         _searchQuery
             .debounce(500L)
             .distinctUntilChanged()
-            .filter { it.length >= 2 }
+            .filter { it.length > 2 }
             .onEach { query ->
                 searchCity(query)
             }

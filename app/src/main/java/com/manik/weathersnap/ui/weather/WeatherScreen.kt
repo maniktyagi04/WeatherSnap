@@ -153,7 +153,7 @@ fun WeatherScreen(
             // Suggestions Dropdown
             SuggestionList(
                 suggestions = searchState.suggestions,
-                isVisible = searchState.query.length >= 2,
+                isVisible = searchState.query.length > 2,
                 onCitySelected = { city ->
                     viewModel.selectCity(city)
                     viewModel.onSearchQueryChange("") 

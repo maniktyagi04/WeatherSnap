@@ -2,7 +2,8 @@ package com.manik.weathersnap.di
 
 import android.content.Context
 import androidx.room.Room
-import com.manik.weathersnap.data.local.WeatherDao
+import com.manik.weathersnap.BuildConfig
+import com.manik.weathersnap.data.local.ReportDao
 import com.manik.weathersnap.data.local.WeatherDatabase
 import com.manik.weathersnap.data.remote.GeocodingApiService
 import com.manik.weathersnap.data.remote.WeatherApiService
@@ -26,17 +27,19 @@ object AppModule {
     @Provides
     @Singleton
     fun provideWeatherApiService(): WeatherApiService {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+        val clientBuilder = OkHttpClient.Builder()
+        
+        if (BuildConfig.DEBUG) {
+            val logging = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+            clientBuilder.addInterceptor(logging)
         }
-        val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
 
         return Retrofit.Builder()
             .baseUrl("https://api.open-meteo.com/")
             .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
+            .client(clientBuilder.build())
             .build()
             .create(WeatherApiService::class.java)
     }
@@ -44,17 +47,19 @@ object AppModule {
     @Provides
     @Singleton
     fun provideGeocodingApiService(): GeocodingApiService {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+        val clientBuilder = OkHttpClient.Builder()
+        
+        if (BuildConfig.DEBUG) {
+            val logging = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+            clientBuilder.addInterceptor(logging)
         }
-        val client = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .build()
 
         return Retrofit.Builder()
             .baseUrl("https://geocoding-api.open-meteo.com/")
             .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
+            .client(clientBuilder.build())
             .build()
             .create(GeocodingApiService::class.java)
     }
@@ -73,13 +78,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWeatherDao(db: WeatherDatabase): WeatherDao {
-        return db.dao
-    }
-
-    @Provides
-    @Singleton
-    fun provideReportDao(db: WeatherDatabase): com.manik.weathersnap.data.local.ReportDao {
+    fun provideReportDao(db: WeatherDatabase): ReportDao {
         return db.reportDao
     }
 
@@ -88,7 +87,7 @@ object AppModule {
     fun provideWeatherRepository(
         weatherApi: WeatherApiService,
         geocodingApi: GeocodingApiService,
-        reportDao: com.manik.weathersnap.data.local.ReportDao
+        reportDao: ReportDao
     ): WeatherRepository {
         return WeatherRepositoryImpl(weatherApi, geocodingApi, reportDao)
     }
