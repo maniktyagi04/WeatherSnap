@@ -12,8 +12,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.manik.weathersnap.ui.camera.CameraScreen
+import com.manik.weathersnap.ui.edit.EditReportScreen
 import com.manik.weathersnap.ui.report.CreateReportScreen
 import com.manik.weathersnap.ui.savedreports.SavedReportsScreen
+import com.manik.weathersnap.ui.trash.TrashScreen
 import com.manik.weathersnap.ui.weather.WeatherScreen
 import com.manik.weathersnap.ui.weather.WeatherUiState
 import com.manik.weathersnap.ui.weather.WeatherViewModel
@@ -53,6 +55,9 @@ fun SetupNavGraph(navController: NavHostController) {
                             )
                         )
                     }
+                },
+                onNavigateToTrash = {
+                    navController.navigate(Routes.Trash.route)
                 }
             )
         }
@@ -67,19 +72,7 @@ fun SetupNavGraph(navController: NavHostController) {
                 navArgument("windSpeed") { type = NavType.StringType },
                 navArgument("pressure") { type = NavType.StringType },
                 navArgument("condition") { type = NavType.StringType }
-            ),
-            enterTransition = {
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(400)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(400)
-                )
-            }
+            )
         ) { backStackEntry ->
             val args = backStackEntry.arguments
             CreateReportScreen(
@@ -95,22 +88,23 @@ fun SetupNavGraph(navController: NavHostController) {
             )
         }
 
-        // Camera Capture Screen
+        // Report Editing Screen
         composable(
-            route = Routes.Camera.route,
-            enterTransition = {
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Up,
-                    animationSpec = tween(400)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Down,
-                    animationSpec = tween(400)
-                )
-            }
-        ) {
+            route = Routes.EditReport.route,
+            arguments = listOf(
+                navArgument("reportId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val reportId = backStackEntry.arguments?.getInt("reportId") ?: 0
+            EditReportScreen(
+                reportId = reportId,
+                onBack = { navController.popBackStack() },
+                onCaptureImage = { navController.navigate(Routes.Camera.route) }
+            )
+        }
+
+        // Camera Capture Screen
+        composable(route = Routes.Camera.route) {
             CameraScreen(
                 onImageCaptured = { uri ->
                     navController.previousBackStackEntry
@@ -123,22 +117,20 @@ fun SetupNavGraph(navController: NavHostController) {
         }
 
         // List of Saved Reports Screen
-        composable(
-            route = Routes.SavedReports.route,
-            enterTransition = {
-                slideIntoContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = tween(400)
-                )
-            },
-            exitTransition = {
-                slideOutOfContainer(
-                    AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = tween(400)
-                )
-            }
-        ) {
-            SavedReportsScreen(onBack = { navController.popBackStack() })
+        composable(route = Routes.SavedReports.route) {
+            SavedReportsScreen(
+                onBack = { navController.popBackStack() },
+                onEditReport = { id ->
+                    navController.navigate(Routes.EditReport.createRoute(id))
+                }
+            )
+        }
+
+        // Trash / Recently Deleted Screen
+        composable(route = Routes.Trash.route) {
+            TrashScreen(
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }

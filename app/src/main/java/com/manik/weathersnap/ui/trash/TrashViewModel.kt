@@ -1,4 +1,4 @@
-package com.manik.weathersnap.ui.savedreports
+package com.manik.weathersnap.ui.trash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,28 +13,34 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SavedReportsViewModel @Inject constructor(
+class TrashViewModel @Inject constructor(
     private val repository: WeatherRepository
 ) : ViewModel() {
 
-    val uiState: StateFlow<SavedReportsUiState> = repository.getActiveReports()
+    val uiState: StateFlow<TrashUiState> = repository.getTrashReports()
         .map { reports ->
-            SavedReportsUiState(reports = reports)
+            TrashUiState(reports = reports)
         }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = SavedReportsUiState(isLoading = true)
+            initialValue = TrashUiState(isLoading = true)
         )
 
-    fun softDeleteReport(reportId: Int) {
+    fun restoreReport(reportId: Int) {
         viewModelScope.launch {
-            repository.softDeleteReport(reportId)
+            repository.restoreReport(reportId)
+        }
+    }
+
+    fun permanentlyDeleteReport(report: ReportEntity) {
+        viewModelScope.launch {
+            repository.permanentlyDeleteReport(report)
         }
     }
 }
 
-data class SavedReportsUiState(
+data class TrashUiState(
     val reports: List<ReportEntity> = emptyList(),
     val isLoading: Boolean = false
 )

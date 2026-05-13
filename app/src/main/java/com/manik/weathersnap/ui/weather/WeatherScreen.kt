@@ -29,16 +29,25 @@ import com.manik.weathersnap.ui.theme.MidnightBlue
 import com.manik.weathersnap.ui.theme.DeepIndigo
 import com.manik.weathersnap.ui.theme.SoftBlue
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.material.icons.filled.DeleteSweep
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(
     viewModel: WeatherViewModel,
     onNavigateToReports: () -> Unit,
-    onCreateReport: () -> Unit
+    onCreateReport: () -> Unit,
+    onNavigateToTrash: () -> Unit
 ) {
     val searchState by viewModel.searchUiState.collectAsState()
     val weatherState by viewModel.weatherUiState.collectAsState()
     val scrollState = rememberScrollState()
+
+    // Clear state on back press if we are showing a weather result
+    BackHandler(enabled = weatherState !is WeatherUiState.Idle) {
+        viewModel.resetToIdle()
+    }
 
     Scaffold(
         topBar = {
@@ -47,11 +56,24 @@ fun WeatherScreen(
                     .background(MaterialTheme.colorScheme.background)
                     .padding(top = 16.dp)
             ) {
-                WeatherSearchBar(
-                    query = searchState.query,
-                    onQueryChange = { viewModel.onSearchQueryChange(it) },
-                    onClearQuery = { viewModel.onSearchQueryChange("") }
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    WeatherSearchBar(
+                        query = searchState.query,
+                        onQueryChange = { viewModel.onSearchQueryChange(it) },
+                        onClearQuery = { viewModel.onSearchQueryChange("") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    
+                    IconButton(
+                        onClick = onNavigateToTrash,
+                        modifier = Modifier.background(SoftBlue.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+                    ) {
+                        Icon(Icons.Default.DeleteSweep, "Trash", tint = Color.White)
+                    }
+                }
             }
         },
         floatingActionButton = {

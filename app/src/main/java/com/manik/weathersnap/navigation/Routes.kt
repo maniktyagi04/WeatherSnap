@@ -14,7 +14,13 @@ sealed class Routes(val route: String) {
         ) = "create_report/$cityName/$temp/$humidity/$windSpeed/$pressure/$condition"
     }
     
+    data object EditReport : Routes("edit_report/{reportId}") {
+        fun createRoute(reportId: Int) = "edit_report/$reportId"
+    }
+    
     data object Camera : Routes("camera")
     
     data object SavedReports : Routes("saved_reports")
+    
+    data object Trash : Routes("trash")
 }

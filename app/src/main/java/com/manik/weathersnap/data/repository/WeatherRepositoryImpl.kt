@@ -49,7 +49,41 @@ class WeatherRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAllReports(): Flow<List<ReportEntity>> {
-        return reportDao.getAllReports()
+    override suspend fun updateReport(report: ReportEntity) {
+        withContext(Dispatchers.IO) {
+            reportDao.updateReport(report)
+        }
+    }
+
+    override fun getActiveReports(): Flow<List<ReportEntity>> {
+        return reportDao.getActiveReports()
+    }
+
+    override fun getTrashReports(): Flow<List<ReportEntity>> {
+        return reportDao.getTrashReports()
+    }
+
+    override suspend fun getReportById(id: Int): ReportEntity? {
+        return withContext(Dispatchers.IO) {
+            reportDao.getReportById(id)
+        }
+    }
+
+    override suspend fun softDeleteReport(id: Int) {
+        withContext(Dispatchers.IO) {
+            reportDao.softDeleteReport(id, System.currentTimeMillis())
+        }
+    }
+
+    override suspend fun restoreReport(id: Int) {
+        withContext(Dispatchers.IO) {
+            reportDao.restoreReport(id)
+        }
+    }
+
+    override suspend fun permanentlyDeleteReport(report: ReportEntity) {
+        withContext(Dispatchers.IO) {
+            reportDao.permanentlyDeleteReport(report)
+        }
     }
 }
