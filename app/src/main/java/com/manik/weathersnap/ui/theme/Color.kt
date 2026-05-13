@@ -2,20 +2,24 @@ package com.manik.weathersnap.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Premium Weather Palette
-val MidnightBlue = Color(0xFF0B0E14)
-val DeepIndigo = Color(0xFF161B22)
-val SoftBlue = Color(0xFF30363D)
-val SkyBlue = Color(0xFF4FAAFF)
-val MistyCyan = Color(0xFF81D4FA)
-val VibrantBlue = Color(0xFF2196F3)
+/**
+ * Production-quality professional color palette for WeatherSnap.
+ */
+val AppBackground = Color(0xFF07111F)
+val SurfacePrimary = Color(0xFF0F1B2D)
+val SurfaceSecondary = Color(0xFF162235)
+val AccentBlue = Color(0xFF4DA3FF)
+val TextPrimary = Color(0xFFF8FAFC)
+val TextSecondary = Color(0xFF94A3B8)
+val DividerColor = Color(0xFF223047)
 
-val SurfaceDark = Color(0xFF121212)
-val OnSurfaceLight = Color(0xFFE1E1E1)
+// Semantic variants
+val SuccessGreen = Color(0xFF10B981)
+val ErrorRed = Color(0xFFEF4444)
+val WarningYellow = Color(0xFFF59E0B)
 
-// Semantic Colors
-val TempHigh = Color(0xFFFF7043)
-val TempLow = Color(0xFF4FC3F7)
-val HumidityBlue = Color(0xFF4DD0E1)
-val WindTeal = Color(0xFF4DB6AC)
-val PressurePurple = Color(0xFF9575CD)
+// Transitioning existing colors for compatibility during refactor
+val SkyBlue = AccentBlue
+val MidnightBlue = AppBackground
+val DeepIndigo = SurfacePrimary
+val SoftBlue = SurfaceSecondary

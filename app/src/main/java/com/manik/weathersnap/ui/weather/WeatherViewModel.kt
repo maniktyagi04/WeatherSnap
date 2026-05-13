@@ -2,18 +2,12 @@ package com.manik.weathersnap.ui.weather
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.manik.weathersnap.data.local.ReportEntity
 import com.manik.weathersnap.domain.model.City
 import com.manik.weathersnap.domain.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,6 +25,14 @@ class WeatherViewModel @Inject constructor(
 
     private val _searchQuery = MutableStateFlow("")
     
+    val recentReports: StateFlow<List<ReportEntity>> = repository.getActiveReports()
+        .map { it.take(3) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
     // In-memory cache for suggestions
     private val suggestionCache = mutableMapOf<String, List<City>>()
 
@@ -51,7 +53,6 @@ class WeatherViewModel @Inject constructor(
     }
 
     private fun searchCity(query: String) {
-        // Check cache first
         if (suggestionCache.containsKey(query)) {
             _searchUiState.value = _searchUiState.value.copy(
                 suggestions = suggestionCache[query] ?: emptyList(),
@@ -76,9 +77,6 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Fetches current weather for the selected [city] and updates the UI state.
-     */
     fun selectCity(city: City) {
         viewModelScope.launch {
             _weatherUiState.value = WeatherUiState.Loading
@@ -92,10 +90,6 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Resets the UI state to Idle and clears the search results.
-     * Used when the user navigates back from a weather result.
-     */
     fun resetToIdle() {
         _weatherUiState.value = WeatherUiState.Idle
         _searchQuery.value = ""

@@ -18,6 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.manik.weathersnap.domain.model.City
+import com.manik.weathersnap.ui.theme.AccentBlue
+import com.manik.weathersnap.ui.theme.SurfacePrimary
+import com.manik.weathersnap.ui.theme.TextPrimary
+import com.manik.weathersnap.ui.theme.TextSecondary
 
 @Composable
 fun SuggestionList(
@@ -34,38 +38,45 @@ fun SuggestionList(
         Card(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .heightIn(max = 300.dp),
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .heightIn(max = 240.dp),
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+            colors = CardDefaults.cardColors(containerColor = SurfacePrimary)
         ) {
             LazyColumn {
                 items(suggestions) { city ->
-                    ListItem(
-                        headlineContent = { Text(city.name, style = MaterialTheme.typography.bodyLarge) },
-                        supportingContent = { 
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onCitySelected(city) }
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Default.LocationOn, 
+                            contentDescription = null,
+                            tint = AccentBlue,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(city.name, style = MaterialTheme.typography.bodyMedium, color = TextPrimary, fontWeight = FontWeight.Bold)
                             Text(
                                 text = "${city.admin1 ?: ""}, ${city.country ?: ""}",
-                                style = MaterialTheme.typography.bodySmall
+                                style = MaterialTheme.typography.labelSmall,
+                                color = TextSecondary
                             ) 
-                        },
-                        leadingContent = { 
-                            Icon(
-                                Icons.Default.LocationOn, 
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            ) 
-                        },
-                        modifier = Modifier.clickable { onCitySelected(city) }
-                    )
+                        }
+                    }
                     HorizontalDivider(
                         modifier = Modifier.padding(horizontal = 16.dp),
-                        thickness = 0.5.dp,
-                        color = MaterialTheme.colorScheme.outlineVariant
+                        thickness = 1.dp,
+                        color = MaterialTheme.colorScheme.outline
                     )
                 }
             }
         }
     }
 }
+import androidx.compose.ui.text.font.FontWeight

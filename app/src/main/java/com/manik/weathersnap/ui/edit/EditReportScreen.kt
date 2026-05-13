@@ -14,7 +14,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -22,10 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.manik.weathersnap.ui.report.components.ImagePreview
 import com.manik.weathersnap.ui.report.components.NotesInput
-import com.manik.weathersnap.ui.theme.DeepIndigo
-import com.manik.weathersnap.ui.theme.MidnightBlue
-import com.manik.weathersnap.ui.theme.SkyBlue
-import com.manik.weathersnap.ui.theme.SoftBlue
+import com.manik.weathersnap.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,102 +47,133 @@ fun EditReportScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("EDIT REPORT", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, letterSpacing = 2.sp) },
+                title = { 
+                    Text(
+                        "EDIT REPORT", 
+                        style = MaterialTheme.typography.titleMedium, 
+                        fontWeight = FontWeight.Bold, 
+                        letterSpacing = 1.sp,
+                        color = TextPrimary
+                    ) 
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = SkyBlue)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = AccentBlue)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = MidnightBlue
+                    containerColor = AppBackground
                 )
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { viewModel.updateReport() },
-                containerColor = SkyBlue,
-                contentColor = MidnightBlue,
-                shape = RoundedCornerShape(20.dp)
-            ) {
-                if (state.isSaving) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = MidnightBlue, strokeWidth = 2.dp)
-                } else {
-                    Icon(Icons.Default.Save, "Save Changes")
-                }
-            }
         }
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Brush.verticalGradient(listOf(MidnightBlue, DeepIndigo)))
+                .background(AppBackground)
                 .padding(innerPadding)
         ) {
             Crossfade(targetState = state.isLoading, label = "EditLoading") { isLoading ->
                 if (isLoading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = SkyBlue)
+                        CircularProgressIndicator(color = AccentBlue, strokeWidth = 2.dp)
                     }
                 } else {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(scrollState)
-                            .padding(24.dp),
+                            .padding(20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Image Preview Section
-                        ImagePreview(
-                            imageUri = state.imageUri,
-                            originalSize = state.originalSize ?: state.report?.originalImageSize ?: "0 KB",
-                            compressedSize = state.compressedSize ?: state.report?.compressedImageSize ?: "0 KB"
-                        )
+                        // Compact Image Preview
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1.2f)
+                        ) {
+                            ImagePreview(
+                                imageUri = state.imageUri,
+                                originalSize = state.originalSize ?: state.report?.originalImageSize ?: "0 KB",
+                                compressedSize = state.compressedSize ?: state.report?.compressedImageSize ?: "0 KB"
+                            )
+                        }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
                         Button(
                             onClick = onCaptureImage,
-                            colors = ButtonDefaults.buttonColors(containerColor = SoftBlue),
-                            shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier.fillMaxWidth().height(56.dp)
+                            colors = ButtonDefaults.buttonColors(containerColor = SurfaceSecondary),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth().height(48.dp)
                         ) {
-                            Icon(Icons.Default.CameraAlt, null, tint = SkyBlue)
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text("REPLACE PHOTO", color = SkyBlue, fontWeight = FontWeight.Bold)
-                        }
-
-                        Spacer(modifier = Modifier.height(32.dp))
-
-                        // Info section (Read-only)
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.05f))
-                        ) {
-                            Column(modifier = Modifier.padding(20.dp)) {
-                                Text(
-                                    text = state.report?.cityName ?: "",
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "${state.report?.condition} • ${state.report?.temperature}°C",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = SkyBlue
-                                )
-                            }
+                            Icon(Icons.Default.CameraAlt, null, tint = AccentBlue, modifier = Modifier.size(20.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("REPLACE PHOTO", color = AccentBlue, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
                         }
 
                         Spacer(modifier = Modifier.height(24.dp))
+
+                        // Info section (Read-only)
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            color = SurfacePrimary
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Column {
+                                    Text(
+                                        text = state.report?.cityName ?: "",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = TextPrimary,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = "${state.report?.condition} • ${state.report?.temperature}°",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = TextSecondary
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(20.dp))
 
                         NotesInput(
                             notes = state.notes,
                             onNotesChange = { viewModel.onNotesChange(it) }
                         )
 
-                        Spacer(modifier = Modifier.height(100.dp))
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        // Save Changes Button
+                        Button(
+                            onClick = { viewModel.updateReport() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(52.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = AccentBlue,
+                                contentColor = AppBackground
+                            )
+                        ) {
+                            if (state.isSaving) {
+                                CircularProgressIndicator(modifier = Modifier.size(20.dp), color = AppBackground, strokeWidth = 2.dp)
+                            } else {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(Icons.Default.Save, null, modifier = Modifier.size(20.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("SAVE CHANGES", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Black)
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(60.dp))
                     }
                 }
             }

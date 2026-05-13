@@ -7,9 +7,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.manik.weathersnap.ui.theme.SurfaceSecondary
+import com.manik.weathersnap.ui.theme.TextPrimary
+import com.manik.weathersnap.ui.theme.TextSecondary
 
 @Composable
 fun EmptyState(
@@ -25,19 +27,20 @@ fun EmptyState(
         Icon(
             imageVector = Icons.Default.CloudOff,
             contentDescription = null,
-            modifier = Modifier.size(80.dp),
-            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+            modifier = Modifier.size(64.dp),
+            tint = SurfaceSecondary
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "No Reports Yet",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = TextPrimary
         )
         Text(
-            text = "Capture the weather to see your reports here.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+            text = "Your captured weather reports will appear here.",
+            style = MaterialTheme.typography.bodySmall,
+            color = TextSecondary,
             modifier = Modifier.padding(top = 8.dp)
         )
     }

@@ -1,5 +1,7 @@
 package com.manik.weathersnap.ui.savedreports
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,14 +13,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.background
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.animation.Crossfade
 import com.manik.weathersnap.ui.savedreports.components.EmptyState
 import com.manik.weathersnap.ui.savedreports.components.ReportCard
+import com.manik.weathersnap.ui.theme.AccentBlue
+import com.manik.weathersnap.ui.theme.AppBackground
+import com.manik.weathersnap.ui.theme.TextPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,19 +36,27 @@ fun SavedReportsScreen(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("SAVED REPORTS", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, letterSpacing = 2.sp) },
+                title = { 
+                    Text(
+                        "SAVED REPORTS", 
+                        style = MaterialTheme.typography.titleMedium, 
+                        fontWeight = FontWeight.Bold, 
+                        letterSpacing = 1.sp,
+                        color = TextPrimary
+                    ) 
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = com.manik.weathersnap.ui.theme.SkyBlue)
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = AccentBlue)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = com.manik.weathersnap.ui.theme.MidnightBlue
+                    containerColor = AppBackground
                 )
             )
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().background(com.manik.weathersnap.ui.theme.MidnightBlue)) {
+        Box(modifier = Modifier.fillMaxSize().background(AppBackground)) {
             Crossfade(
                 targetState = state.isLoading, 
                 label = "LoadingCrossfade",
@@ -52,20 +64,15 @@ fun SavedReportsScreen(
             ) { isLoading ->
                 if (isLoading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(strokeWidth = 3.dp, color = com.manik.weathersnap.ui.theme.SkyBlue)
+                        CircularProgressIndicator(strokeWidth = 3.dp, color = AccentBlue)
                     }
                 } else if (state.reports.isEmpty()) {
                     EmptyState()
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(
-                            start = 20.dp,
-                            end = 20.dp,
-                            top = 16.dp,
-                            bottom = 80.dp 
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(
                             items = state.reports,
@@ -77,6 +84,9 @@ fun SavedReportsScreen(
                                 onDelete = { viewModel.softDeleteReport(report.id) }
                             )
                         }
+                        
+                        // Bottom spacer for better scrolling
+                        item { Spacer(modifier = Modifier.height(80.dp)) }
                     }
                 }
             }

@@ -18,11 +18,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.manik.weathersnap.data.local.ReportEntity
-import com.manik.weathersnap.ui.theme.SkyBlue
+import com.manik.weathersnap.ui.theme.AccentBlue
+import com.manik.weathersnap.ui.theme.TextPrimary
+import com.manik.weathersnap.ui.theme.TextSecondary
 import com.manik.weathersnap.utils.extensions.toFormattedDate
 
 /**
- * Redesigned, compact report card with a balanced layout and clear hierarchy.
+ * Professional, utility-style report card with a compact layout.
  */
 @Composable
 fun ReportCard(
@@ -43,9 +45,9 @@ fun ReportCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.05f)
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -55,130 +57,134 @@ fun ReportCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left: Compact Image Thumbnail
+            // Compact Fixed Image Thumbnail
             AsyncImage(
                 model = report.imagePath,
                 contentDescription = "Weather Report Image",
                 modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White.copy(alpha = 0.1f)),
+                    .size(64.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
-            // Right: Content Column
+            // Details Column
             Column(
                 modifier = Modifier.weight(1f)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = report.cityName,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = report.condition.uppercase(),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = SkyBlue,
-                            letterSpacing = 1.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                    Text(
+                        text = report.cityName,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                     
                     Text(
                         text = "${report.temperature}°",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = Color.White,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = TextPrimary,
                         fontWeight = FontWeight.Black
                     )
-                    
-                    Box(modifier = Modifier.padding(start = 4.dp)) {
-                        IconButton(
-                            onClick = { showMenu = true },
-                            modifier = Modifier.size(24.dp)
-                        ) {
-                            Icon(
-                                Icons.Default.MoreVert, 
-                                "More", 
-                                tint = Color.White.copy(alpha = 0.3f),
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                        
-                        DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = { showMenu = false },
-                            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
-                        ) {
-                            if (isTrash) {
-                                DropdownMenuItem(
-                                    text = { Text("Restore") },
-                                    onClick = {
-                                        showMenu = false
-                                        onRestore?.invoke()
-                                    },
-                                    leadingIcon = { Icon(Icons.Default.Restore, null) }
-                                )
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = Color.White.copy(alpha = 0.1f))
-                                DropdownMenuItem(
-                                    text = { Text("Delete Permanently") },
-                                    onClick = {
-                                        showMenu = false
-                                        onDelete()
-                                    },
-                                    leadingIcon = { Icon(Icons.Default.DeleteForever, null, tint = MaterialTheme.colorScheme.error) }
-                                )
-                            } else {
-                                DropdownMenuItem(
-                                    text = { Text("Edit") },
-                                    onClick = {
-                                        showMenu = false
-                                        onEdit()
-                                    },
-                                    leadingIcon = { Icon(Icons.Default.Edit, null) }
-                                )
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = Color.White.copy(alpha = 0.1f))
-                                DropdownMenuItem(
-                                    text = { Text("Move to Trash") },
-                                    onClick = {
-                                        showMenu = false
-                                        onDelete()
-                                    },
-                                    leadingIcon = { Icon(Icons.Default.Delete, null) }
-                                )
-                            }
-                        }
-                    }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = report.condition.uppercase(),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = AccentBlue,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "•",
+                        color = TextSecondary,
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                    Text(
+                        text = dateString,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TextSecondary
+                    )
+                }
 
                 if (report.notes.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = report.notes,
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.6f),
+                        color = TextSecondary,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(bottom = 4.dp)
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
+            }
 
-                Text(
-                    text = dateString,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.White.copy(alpha = 0.4f)
-                )
+            // Actions Menu
+            Box {
+                IconButton(
+                    onClick = { showMenu = true },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        Icons.Default.MoreVert, 
+                        "More", 
+                        tint = TextSecondary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+                
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false },
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+                ) {
+                    if (isTrash) {
+                        DropdownMenuItem(
+                            text = { Text("Restore") },
+                            onClick = {
+                                showMenu = false
+                                onRestore?.invoke()
+                            },
+                            leadingIcon = { Icon(Icons.Default.Restore, null) }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Delete Permanently", color = MaterialTheme.colorScheme.error) },
+                            onClick = {
+                                showMenu = false
+                                onDelete()
+                            },
+                            leadingIcon = { Icon(Icons.Default.DeleteForever, null, tint = MaterialTheme.colorScheme.error) }
+                        )
+                    } else {
+                        DropdownMenuItem(
+                            text = { Text("Edit") },
+                            onClick = {
+                                showMenu = false
+                                onEdit()
+                            },
+                            leadingIcon = { Icon(Icons.Default.Edit, null) }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Move to Trash") },
+                            onClick = {
+                                showMenu = false
+                                onDelete()
+                            },
+                            leadingIcon = { Icon(Icons.Default.Delete, null) }
+                        )
+                    }
+                }
             }
         }
     }

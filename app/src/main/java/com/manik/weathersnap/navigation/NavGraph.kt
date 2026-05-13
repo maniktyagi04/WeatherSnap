@@ -58,6 +58,9 @@ fun SetupNavGraph(navController: NavHostController) {
                 },
                 onNavigateToTrash = {
                     navController.navigate(Routes.Trash.route)
+                },
+                onNavigateToEditReport = { id ->
+                    navController.navigate(Routes.EditReport.createRoute(id))
                 }
             )
         }
