@@ -133,7 +133,7 @@ private fun MetricItem(icon: ImageVector, value: String) {
 }
 
 @Composable
-private fun MetricDivider() {
+private fun RowScope.MetricDivider() {
     Box(
         modifier = Modifier
             .height(24.dp)
