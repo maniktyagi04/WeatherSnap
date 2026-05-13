@@ -1,15 +1,7 @@
 package com.manik.weathersnap.ui.weather
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -25,28 +17,34 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.manik.weathersnap.ui.savedreports.components.ReportCard
 import com.manik.weathersnap.ui.theme.*
 import com.manik.weathersnap.ui.weather.components.*
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WeatherScreen(
     viewModel: WeatherViewModel,
     onNavigateToReports: () -> Unit,
-    onCreateReport: () -> Unit,
     onNavigateToTrash: () -> Unit,
-    onNavigateToEditReport: (Int) -> Unit
+    onNavigateToEditReport: (Int) -> Unit,
+    onNavigateToWeatherDetails: () -> Unit
 ) {
     val searchState by viewModel.searchUiState.collectAsState()
-    val weatherState by viewModel.weatherUiState.collectAsState()
     val recentReports by viewModel.recentReports.collectAsState()
+    val trashCount by viewModel.trashCount.collectAsState()
     val scrollState = rememberScrollState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    BackHandler(enabled = weatherState !is WeatherUiState.Idle) {
-        viewModel.resetToIdle()
+    LaunchedEffect(Unit) {
+        viewModel.snackbarEvent.collectLatest { message ->
+            snackbarHostState.showSnackbar(message)
+        }
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             Column(
                 modifier = Modifier
@@ -73,94 +71,83 @@ fun WeatherScreen(
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Dashboard Content (Visible when Idle or as background)
-                Column(
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Quick Actions
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp)
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Quick Actions
-                    Row(
+                    QuickActionCard(
+                        title = "Saved Reports",
+                        icon = Icons.Default.History,
+                        onClick = onNavigateToReports,
+                        modifier = Modifier.weight(1f)
+                    )
+                    
+                    val trashTitle = if (trashCount > 0) "Trash ($trashCount)" else "Trash Bin"
+                    QuickActionCard(
+                        title = trashTitle,
+                        icon = Icons.Default.DeleteSweep,
+                        onClick = onNavigateToTrash,
+                        modifier = Modifier.weight(1f),
+                        containerColor = if (trashCount > 0) MaterialTheme.colorScheme.error.copy(alpha = 0.1f) else SurfacePrimary,
+                        contentColor = if (trashCount > 0) MaterialTheme.colorScheme.error else AccentBlue
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Recent Reports Section (Vertical Latest 3)
+                if (recentReports.isNotEmpty()) {
+                    SectionHeader("LATEST REPORTS")
+                    
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        QuickActionCard(
-                            title = "All Reports",
-                            icon = Icons.Default.History,
-                            onClick = onNavigateToReports,
-                            modifier = Modifier.weight(1f)
-                        )
-                        QuickActionCard(
-                            title = "Trash",
-                            icon = Icons.Default.DeleteSweep,
-                            onClick = onNavigateToTrash,
-                            modifier = Modifier.weight(1f),
-                            containerColor = MaterialTheme.colorScheme.error.copy(alpha = 0.1f),
-                            contentColor = MaterialTheme.colorScheme.error
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Recent Reports
-                    if (recentReports.isNotEmpty()) {
-                        SectionHeader("RECENT REPORTS", onActionClick = onNavigateToReports)
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(recentReports) { report ->
-                                RecentReportCard(
-                                    report = report,
-                                    onClick = { onNavigateToEditReport(report.id) }
-                                )
-                            }
-                        }
-                    } else {
-                        // Helper Text when no reports
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(32.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                "Your recent weather captures will appear here",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextSecondary
+                        recentReports.forEach { report ->
+                            ReportCard(
+                                report = report,
+                                onEdit = { onNavigateToEditReport(report.id) },
+                                onDelete = { viewModel.softDeleteReport(report.id) },
+                                modifier = Modifier.height(140.dp)
                             )
                         }
-                    }
-
-                    Spacer(modifier = Modifier.height(24.dp))
-                }
-
-                // Weather Result Overlay
-                Crossfade(targetState = weatherState, label = "WeatherState") { state ->
-                    when (state) {
-                        is WeatherUiState.Idle -> { /* Already showing dashboard */ }
-                        is WeatherUiState.Loading -> LoadingView()
-                        is WeatherUiState.Error -> ErrorView(state.message)
-                        is WeatherUiState.Success -> {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(AppBackground.copy(alpha = 0.95f))
-                            ) {
-                                SectionHeader("SEARCH RESULT", showAction = false)
-                                WeatherCard(
-                                    weather = state.weather,
-                                    city = state.city,
-                                    onCreateReport = onCreateReport
-                                )
-                                Spacer(modifier = Modifier.height(40.dp))
-                            }
+                        
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        OutlinedButton(
+                            onClick = onNavigateToReports,
+                            modifier = Modifier.fillMaxWidth().height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = AccentBlue),
+                            border = androidx.compose.foundation.BorderStroke(1.dp, DividerColor)
+                        ) {
+                            Text("VIEW ALL REPORTS", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
                         }
                     }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(48.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            "Start capturing weather to see reports here",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TextSecondary,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(40.dp))
             }
 
             // Suggestions Dropdown
@@ -170,6 +157,7 @@ fun WeatherScreen(
                 onCitySelected = { city ->
                     viewModel.selectCity(city)
                     viewModel.onSearchQueryChange("") 
+                    onNavigateToWeatherDetails()
                 },
                 modifier = Modifier.align(Alignment.TopCenter)
             )
@@ -178,15 +166,11 @@ fun WeatherScreen(
 }
 
 @Composable
-fun SectionHeader(
-    title: String,
-    showAction: Boolean = true,
-    onActionClick: () -> Unit = {}
-) {
+fun SectionHeader(title: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -197,15 +181,6 @@ fun SectionHeader(
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp
         )
-        if (showAction) {
-            Text(
-                text = "SEE ALL",
-                style = MaterialTheme.typography.labelSmall,
-                color = AccentBlue,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable { onActionClick() }
-            )
-        }
     }
 }
 
@@ -215,12 +190,12 @@ fun QuickActionCard(
     icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = SurfaceSecondary,
+    containerColor: Color = SurfacePrimary,
     contentColor: Color = AccentBlue
 ) {
     Card(
-        modifier = modifier.height(56.dp),
-        shape = RoundedCornerShape(12.dp),
+        modifier = modifier.height(64.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = containerColor),
         onClick = onClick
     ) {
@@ -231,27 +206,14 @@ fun QuickActionCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(icon, null, tint = contentColor, modifier = Modifier.size(20.dp))
+            Icon(icon, null, tint = contentColor, modifier = Modifier.size(24.dp))
             Text(
                 text = title,
                 style = MaterialTheme.typography.labelLarge,
                 color = TextPrimary,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 1
             )
         }
-    }
-}
-
-@Composable
-fun LoadingView() {
-    Box(modifier = Modifier.fillMaxWidth().height(200.dp), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(color = AccentBlue, strokeWidth = 2.dp)
-    }
-}
-
-@Composable
-fun ErrorView(message: String) {
-    Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-        Text(message, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
     }
 }
