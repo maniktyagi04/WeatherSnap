@@ -9,18 +9,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.manik.weathersnap.data.local.ReportEntity
 import com.manik.weathersnap.ui.theme.SkyBlue
 import com.manik.weathersnap.utils.extensions.toFormattedDate
 
 /**
- * Modern report card with an image-first layout and a context menu for actions.
+ * Redesigned, compact report card with a balanced layout and clear hierarchy.
  */
 @Composable
 fun ReportCard(
@@ -41,50 +43,76 @@ fun ReportCard(
 
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
+        shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = Color.White.copy(alpha = 0.05f)
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(IntrinsicSize.Min)
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Image Section
+            // Left: Compact Image Thumbnail
             AsyncImage(
                 model = report.imagePath,
                 contentDescription = "Weather Report Image",
                 modifier = Modifier
-                    .width(100.dp)
-                    .fillMaxHeight(),
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color.White.copy(alpha = 0.1f)),
                 contentScale = ContentScale.Crop
             )
 
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Right: Content Column
             Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .weight(1f)
+                modifier = Modifier.weight(1f)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = report.cityName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = report.condition.uppercase(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = SkyBlue,
+                            letterSpacing = 1.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    
                     Text(
-                        text = report.cityName,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
+                        text = "${report.temperature}°",
+                        style = MaterialTheme.typography.headlineSmall,
                         color = Color.White,
-                        modifier = Modifier.weight(1f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        fontWeight = FontWeight.Black
                     )
                     
-                    Box {
-                        IconButton(onClick = { showMenu = true }) {
-                            Icon(Icons.Default.MoreVert, "More", tint = Color.White.copy(alpha = 0.5f))
+                    Box(modifier = Modifier.padding(start = 4.dp)) {
+                        IconButton(
+                            onClick = { showMenu = true },
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.MoreVert, 
+                                "More", 
+                                tint = Color.White.copy(alpha = 0.3f),
+                                modifier = Modifier.size(20.dp)
+                            )
                         }
                         
                         DropdownMenu(
@@ -101,7 +129,7 @@ fun ReportCard(
                                     },
                                     leadingIcon = { Icon(Icons.Default.Restore, null) }
                                 )
-                                Divider()
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = Color.White.copy(alpha = 0.1f))
                                 DropdownMenuItem(
                                     text = { Text("Delete Permanently") },
                                     onClick = {
@@ -119,7 +147,7 @@ fun ReportCard(
                                     },
                                     leadingIcon = { Icon(Icons.Default.Edit, null) }
                                 )
-                                Divider()
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp), color = Color.White.copy(alpha = 0.1f))
                                 DropdownMenuItem(
                                     text = { Text("Move to Trash") },
                                     onClick = {
@@ -133,54 +161,24 @@ fun ReportCard(
                     }
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = dateString,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White.copy(alpha = 0.5f)
-                    )
-                    Text(
-                        text = "${report.temperature}°",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = SkyBlue,
-                        fontWeight = FontWeight.Black
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    com.manik.weathersnap.ui.common.WeatherMetric(
-                        label = "CONDITION",
-                        value = report.condition,
-                        labelColor = Color.White.copy(alpha = 0.3f),
-                        valueColor = Color.White
-                    )
-                    com.manik.weathersnap.ui.common.WeatherMetric(
-                        label = "HUMIDITY",
-                        value = "${report.humidity}%",
-                        labelColor = Color.White.copy(alpha = 0.3f),
-                        valueColor = Color.White
-                    )
-                }
+                Spacer(modifier = Modifier.height(8.dp))
 
                 if (report.notes.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         text = report.notes,
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.7f),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        color = Color.White.copy(alpha = 0.6f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
                 }
+
+                Text(
+                    text = dateString,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.White.copy(alpha = 0.4f)
+                )
             }
         }
     }

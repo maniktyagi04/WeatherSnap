@@ -53,11 +53,11 @@ fun WeatherScreen(
         topBar = {
             Column(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(top = 16.dp)
+                    .background(MidnightBlue)
+                    .padding(top = 12.dp, bottom = 8.dp)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(end = 16.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     WeatherSearchBar(
@@ -67,11 +67,15 @@ fun WeatherScreen(
                         modifier = Modifier.weight(1f)
                     )
                     
+                    Spacer(modifier = Modifier.width(12.dp))
+                    
                     IconButton(
                         onClick = onNavigateToTrash,
-                        modifier = Modifier.background(SoftBlue.copy(alpha = 0.3f), RoundedCornerShape(12.dp))
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(Color.White.copy(alpha = 0.05f), RoundedCornerShape(14.dp))
                     ) {
-                        Icon(Icons.Default.DeleteSweep, "Trash", tint = Color.White)
+                        Icon(Icons.Default.DeleteSweep, "Trash", tint = SkyBlue, modifier = Modifier.size(24.dp))
                     }
                 }
             }
@@ -86,10 +90,10 @@ fun WeatherScreen(
                     onClick = onCreateReport,
                     containerColor = SkyBlue,
                     contentColor = MidnightBlue,
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.padding(bottom = 16.dp)
+                    shape = RoundedCornerShape(18.dp),
+                    modifier = Modifier.padding(bottom = 8.dp)
                 ) {
-                    Icon(Icons.Default.Add, null, modifier = Modifier.size(28.dp))
+                    Icon(Icons.Default.Add, null, modifier = Modifier.size(26.dp))
                 }
             }
         }
@@ -97,68 +101,48 @@ fun WeatherScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(MidnightBlue, DeepIndigo)
-                    )
-                )
+                .background(Brush.verticalGradient(listOf(MidnightBlue, DeepIndigo)))
                 .padding(paddingValues)
         ) {
-            // Main Content
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Crossfade(
-                    targetState = weatherState,
-                    label = "WeatherStateCrossfade"
-                ) { state ->
+                Crossfade(targetState = weatherState, label = "WeatherState") { state ->
                     when (state) {
-                        is WeatherUiState.Idle -> {
-                            EmptyStateView("Enter a city name above to check the weather")
-                        }
-                        is WeatherUiState.Loading -> {
-                            LoadingView()
-                        }
-                        is WeatherUiState.Error -> {
-                            ErrorView(state.message)
-                        }
+                        is WeatherUiState.Idle -> EmptyStateView("Enter a city to explore weather")
+                        is WeatherUiState.Loading -> LoadingView()
+                        is WeatherUiState.Error -> ErrorView(state.message)
                         is WeatherUiState.Success -> {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(bottom = 80.dp)
+                                modifier = Modifier.padding(bottom = 60.dp, top = 16.dp)
                             ) {
-                                WeatherCard(
-                                    weather = state.weather,
-                                    city = state.city
-                                )
+                                WeatherCard(weather = state.weather, city = state.city)
                                 
-                                Spacer(modifier = Modifier.height(24.dp))
+                                Spacer(modifier = Modifier.height(20.dp))
                                 
                                 Button(
                                     onClick = onNavigateToReports,
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = SoftBlue
-                                    ),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.05f)),
                                     shape = RoundedCornerShape(16.dp),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(horizontal = 32.dp)
-                                        .height(56.dp)
+                                        .height(52.dp)
                                 ) {
-                                    Icon(Icons.Default.List, null, tint = SkyBlue)
+                                    Icon(Icons.Default.List, null, tint = SkyBlue, modifier = Modifier.size(20.dp))
                                     Spacer(modifier = Modifier.width(12.dp))
-                                    Text("VIEW SAVED REPORTS", style = MaterialTheme.typography.titleMedium, color = SkyBlue)
+                                    Text("VIEW SAVED REPORTS", style = MaterialTheme.typography.labelLarge, color = SkyBlue, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
                     }
                 }
             }
-
-            // Suggestions Dropdown (Overlay)
+            
             SuggestionList(
                 suggestions = searchState.suggestions,
                 isVisible = searchState.query.length >= 2,

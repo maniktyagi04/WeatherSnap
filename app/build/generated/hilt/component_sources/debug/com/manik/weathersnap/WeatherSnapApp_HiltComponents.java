@@ -1,8 +1,10 @@
 package com.manik.weathersnap;
 
 import com.manik.weathersnap.di.AppModule;
+import com.manik.weathersnap.ui.edit.EditReportViewModel_HiltModules;
 import com.manik.weathersnap.ui.report.CreateReportViewModel_HiltModules;
 import com.manik.weathersnap.ui.savedreports.SavedReportsViewModel_HiltModules;
+import com.manik.weathersnap.ui.trash.TrashViewModel_HiltModules;
 import com.manik.weathersnap.ui.weather.WeatherViewModel_HiltModules;
 import dagger.Binds;
 import dagger.Component;
@@ -156,9 +158,11 @@ public final class WeatherSnapApp_HiltComponents {
   @Subcomponent(
       modules = {
           CreateReportViewModel_HiltModules.KeyModule.class,
+          EditReportViewModel_HiltModules.KeyModule.class,
           HiltWrapper_ActivityRetainedComponentManager_LifecycleModule.class,
           HiltWrapper_SavedStateHandleModule.class,
           SavedReportsViewModel_HiltModules.KeyModule.class,
+          TrashViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
           WeatherViewModel_HiltModules.KeyModule.class
@@ -198,8 +202,10 @@ public final class WeatherSnapApp_HiltComponents {
   @Subcomponent(
       modules = {
           CreateReportViewModel_HiltModules.BindsModule.class,
+          EditReportViewModel_HiltModules.BindsModule.class,
           HiltWrapper_HiltViewModelFactory_ViewModelModule.class,
           SavedReportsViewModel_HiltModules.BindsModule.class,
+          TrashViewModel_HiltModules.BindsModule.class,
           WeatherViewModel_HiltModules.BindsModule.class
       }
   )

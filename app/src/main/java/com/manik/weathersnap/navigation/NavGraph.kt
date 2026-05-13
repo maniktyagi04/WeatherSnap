@@ -116,10 +116,12 @@ fun SetupNavGraph(navController: NavHostController) {
             )
         }
 
-        // List of Saved Reports Screen
         composable(route = Routes.SavedReports.route) {
             SavedReportsScreen(
-                onBack = { navController.popBackStack() },
+                onBack = {
+                    sharedWeatherViewModel.resetToIdle()
+                    navController.popBackStack()
+                },
                 onEditReport = { id ->
                     navController.navigate(Routes.EditReport.createRoute(id))
                 }

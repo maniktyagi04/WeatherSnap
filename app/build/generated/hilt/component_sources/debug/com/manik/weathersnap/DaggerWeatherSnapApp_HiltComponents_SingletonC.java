@@ -16,10 +16,14 @@ import com.manik.weathersnap.di.AppModule_ProvideWeatherApiServiceFactory;
 import com.manik.weathersnap.di.AppModule_ProvideWeatherDatabaseFactory;
 import com.manik.weathersnap.di.AppModule_ProvideWeatherRepositoryFactory;
 import com.manik.weathersnap.domain.repository.WeatherRepository;
+import com.manik.weathersnap.ui.edit.EditReportViewModel;
+import com.manik.weathersnap.ui.edit.EditReportViewModel_HiltModules;
 import com.manik.weathersnap.ui.report.CreateReportViewModel;
 import com.manik.weathersnap.ui.report.CreateReportViewModel_HiltModules;
 import com.manik.weathersnap.ui.savedreports.SavedReportsViewModel;
 import com.manik.weathersnap.ui.savedreports.SavedReportsViewModel_HiltModules;
+import com.manik.weathersnap.ui.trash.TrashViewModel;
+import com.manik.weathersnap.ui.trash.TrashViewModel_HiltModules;
 import com.manik.weathersnap.ui.weather.WeatherViewModel;
 import com.manik.weathersnap.ui.weather.WeatherViewModel_HiltModules;
 import com.manik.weathersnap.utils.ImageCompressor;
@@ -383,7 +387,7 @@ public final class DaggerWeatherSnapApp_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(3).put(LazyClassKeyProvider.com_manik_weathersnap_ui_report_CreateReportViewModel, CreateReportViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_manik_weathersnap_ui_savedreports_SavedReportsViewModel, SavedReportsViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_manik_weathersnap_ui_weather_WeatherViewModel, WeatherViewModel_HiltModules.KeyModule.provide()).build());
+      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(5).put(LazyClassKeyProvider.com_manik_weathersnap_ui_report_CreateReportViewModel, CreateReportViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_manik_weathersnap_ui_edit_EditReportViewModel, EditReportViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_manik_weathersnap_ui_savedreports_SavedReportsViewModel, SavedReportsViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_manik_weathersnap_ui_trash_TrashViewModel, TrashViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_manik_weathersnap_ui_weather_WeatherViewModel, WeatherViewModel_HiltModules.KeyModule.provide()).build());
     }
 
     @Override
@@ -403,11 +407,18 @@ public final class DaggerWeatherSnapApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_manik_weathersnap_ui_report_CreateReportViewModel = "com.manik.weathersnap.ui.report.CreateReportViewModel";
+
       static String com_manik_weathersnap_ui_weather_WeatherViewModel = "com.manik.weathersnap.ui.weather.WeatherViewModel";
 
       static String com_manik_weathersnap_ui_savedreports_SavedReportsViewModel = "com.manik.weathersnap.ui.savedreports.SavedReportsViewModel";
 
-      static String com_manik_weathersnap_ui_report_CreateReportViewModel = "com.manik.weathersnap.ui.report.CreateReportViewModel";
+      static String com_manik_weathersnap_ui_trash_TrashViewModel = "com.manik.weathersnap.ui.trash.TrashViewModel";
+
+      static String com_manik_weathersnap_ui_edit_EditReportViewModel = "com.manik.weathersnap.ui.edit.EditReportViewModel";
+
+      @KeepFieldType
+      CreateReportViewModel com_manik_weathersnap_ui_report_CreateReportViewModel2;
 
       @KeepFieldType
       WeatherViewModel com_manik_weathersnap_ui_weather_WeatherViewModel2;
@@ -416,7 +427,10 @@ public final class DaggerWeatherSnapApp_HiltComponents_SingletonC {
       SavedReportsViewModel com_manik_weathersnap_ui_savedreports_SavedReportsViewModel2;
 
       @KeepFieldType
-      CreateReportViewModel com_manik_weathersnap_ui_report_CreateReportViewModel2;
+      TrashViewModel com_manik_weathersnap_ui_trash_TrashViewModel2;
+
+      @KeepFieldType
+      EditReportViewModel com_manik_weathersnap_ui_edit_EditReportViewModel2;
     }
   }
 
@@ -429,7 +443,11 @@ public final class DaggerWeatherSnapApp_HiltComponents_SingletonC {
 
     private Provider<CreateReportViewModel> createReportViewModelProvider;
 
+    private Provider<EditReportViewModel> editReportViewModelProvider;
+
     private Provider<SavedReportsViewModel> savedReportsViewModelProvider;
+
+    private Provider<TrashViewModel> trashViewModelProvider;
 
     private Provider<WeatherViewModel> weatherViewModelProvider;
 
@@ -447,13 +465,15 @@ public final class DaggerWeatherSnapApp_HiltComponents_SingletonC {
     private void initialize(final SavedStateHandle savedStateHandleParam,
         final ViewModelLifecycle viewModelLifecycleParam) {
       this.createReportViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 0);
-      this.savedReportsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
-      this.weatherViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
+      this.editReportViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
+      this.savedReportsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
+      this.trashViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
+      this.weatherViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(3).put(LazyClassKeyProvider.com_manik_weathersnap_ui_report_CreateReportViewModel, ((Provider) createReportViewModelProvider)).put(LazyClassKeyProvider.com_manik_weathersnap_ui_savedreports_SavedReportsViewModel, ((Provider) savedReportsViewModelProvider)).put(LazyClassKeyProvider.com_manik_weathersnap_ui_weather_WeatherViewModel, ((Provider) weatherViewModelProvider)).build());
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(5).put(LazyClassKeyProvider.com_manik_weathersnap_ui_report_CreateReportViewModel, ((Provider) createReportViewModelProvider)).put(LazyClassKeyProvider.com_manik_weathersnap_ui_edit_EditReportViewModel, ((Provider) editReportViewModelProvider)).put(LazyClassKeyProvider.com_manik_weathersnap_ui_savedreports_SavedReportsViewModel, ((Provider) savedReportsViewModelProvider)).put(LazyClassKeyProvider.com_manik_weathersnap_ui_trash_TrashViewModel, ((Provider) trashViewModelProvider)).put(LazyClassKeyProvider.com_manik_weathersnap_ui_weather_WeatherViewModel, ((Provider) weatherViewModelProvider)).build());
     }
 
     @Override
@@ -463,20 +483,30 @@ public final class DaggerWeatherSnapApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
+      static String com_manik_weathersnap_ui_trash_TrashViewModel = "com.manik.weathersnap.ui.trash.TrashViewModel";
+
+      static String com_manik_weathersnap_ui_edit_EditReportViewModel = "com.manik.weathersnap.ui.edit.EditReportViewModel";
+
       static String com_manik_weathersnap_ui_weather_WeatherViewModel = "com.manik.weathersnap.ui.weather.WeatherViewModel";
+
+      static String com_manik_weathersnap_ui_report_CreateReportViewModel = "com.manik.weathersnap.ui.report.CreateReportViewModel";
 
       static String com_manik_weathersnap_ui_savedreports_SavedReportsViewModel = "com.manik.weathersnap.ui.savedreports.SavedReportsViewModel";
 
-      static String com_manik_weathersnap_ui_report_CreateReportViewModel = "com.manik.weathersnap.ui.report.CreateReportViewModel";
+      @KeepFieldType
+      TrashViewModel com_manik_weathersnap_ui_trash_TrashViewModel2;
+
+      @KeepFieldType
+      EditReportViewModel com_manik_weathersnap_ui_edit_EditReportViewModel2;
 
       @KeepFieldType
       WeatherViewModel com_manik_weathersnap_ui_weather_WeatherViewModel2;
 
       @KeepFieldType
-      SavedReportsViewModel com_manik_weathersnap_ui_savedreports_SavedReportsViewModel2;
+      CreateReportViewModel com_manik_weathersnap_ui_report_CreateReportViewModel2;
 
       @KeepFieldType
-      CreateReportViewModel com_manik_weathersnap_ui_report_CreateReportViewModel2;
+      SavedReportsViewModel com_manik_weathersnap_ui_savedreports_SavedReportsViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -503,10 +533,16 @@ public final class DaggerWeatherSnapApp_HiltComponents_SingletonC {
           case 0: // com.manik.weathersnap.ui.report.CreateReportViewModel 
           return (T) new CreateReportViewModel(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.imageCompressorProvider.get(), singletonCImpl.provideWeatherRepositoryProvider.get());
 
-          case 1: // com.manik.weathersnap.ui.savedreports.SavedReportsViewModel 
+          case 1: // com.manik.weathersnap.ui.edit.EditReportViewModel 
+          return (T) new EditReportViewModel(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule), singletonCImpl.provideWeatherRepositoryProvider.get(), singletonCImpl.imageCompressorProvider.get());
+
+          case 2: // com.manik.weathersnap.ui.savedreports.SavedReportsViewModel 
           return (T) new SavedReportsViewModel(singletonCImpl.provideWeatherRepositoryProvider.get());
 
-          case 2: // com.manik.weathersnap.ui.weather.WeatherViewModel 
+          case 3: // com.manik.weathersnap.ui.trash.TrashViewModel 
+          return (T) new TrashViewModel(singletonCImpl.provideWeatherRepositoryProvider.get());
+
+          case 4: // com.manik.weathersnap.ui.weather.WeatherViewModel 
           return (T) new WeatherViewModel(singletonCImpl.provideWeatherRepositoryProvider.get());
 
           default: throw new AssertionError(id);
