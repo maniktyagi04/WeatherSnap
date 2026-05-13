@@ -24,7 +24,8 @@ import com.manik.weathersnap.ui.theme.TextSecondary
 import com.manik.weathersnap.utils.extensions.toFormattedDate
 
 /**
- * Professional, utility-style report card with a compact layout.
+ * Redesigned ReportCard with a proper compact utility layout.
+ * Features a 90x90 image on the left and structured metadata on the right.
  */
 @Composable
 fun ReportCard(
@@ -44,94 +45,95 @@ fun ReportCard(
     var showMenu by remember { mutableStateOf(false) }
 
     Card(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 140.dp, max = 170.dp),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Compact Fixed Image Thumbnail
+            // Left Side: 90dp x 90dp Image Thumbnail
             AsyncImage(
                 model = report.imagePath,
                 contentDescription = "Weather Report Image",
                 modifier = Modifier
-                    .size(64.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .size(90.dp)
+                    .clip(RoundedCornerShape(12.dp))
                     .background(MaterialTheme.colorScheme.surfaceVariant),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-            // Details Column
+            // Right Side: Details
             Column(
                 modifier = Modifier.weight(1f)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
-                    Text(
-                        text = report.cityName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = report.cityName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = TextPrimary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = report.condition.uppercase(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = AccentBlue,
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = 0.5.sp,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                     
                     Text(
                         text = "${report.temperature}°",
                         style = MaterialTheme.typography.titleLarge,
                         color = TextPrimary,
-                        fontWeight = FontWeight.Black
+                        fontWeight = FontWeight.Black,
+                        modifier = Modifier.padding(start = 8.dp)
                     )
                 }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = report.condition.uppercase(),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = AccentBlue,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "•",
-                        color = TextSecondary,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                    Text(
-                        text = dateString,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TextSecondary
-                    )
-                }
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = dateString,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TextSecondary
+                )
 
                 if (report.notes.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = report.notes,
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        lineHeight = 16.sp
                     )
                 }
             }
 
             // Actions Menu
-            Box {
+            Box(modifier = Modifier.align(Alignment.Top)) {
                 IconButton(
                     onClick = { showMenu = true },
                     modifier = Modifier.size(32.dp)
