@@ -1,9 +1,11 @@
 package com.manik.weathersnap.domain.repository
 
 import com.google.common.truth.Truth.assertThat
-import com.manik.weathersnap.data.remote.WeatherApi
-import com.manik.weathersnap.data.repository.WeatherRepositoryImpl
 import com.manik.weathersnap.data.local.ReportDao
+import com.manik.weathersnap.data.remote.GeocodingApiService
+import com.manik.weathersnap.data.remote.WeatherApiService
+import com.manik.weathersnap.data.remote.dto.GeocodingResponseDto
+import com.manik.weathersnap.data.repository.WeatherRepositoryImpl
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -13,19 +15,20 @@ import org.junit.Test
 class WeatherRepositoryImplTest {
 
     private lateinit var repository: WeatherRepositoryImpl
-    private val api: WeatherApi = mockk()
+    private val weatherApi: WeatherApiService = mockk()
+    private val geocodingApi: GeocodingApiService = mockk()
     private val reportDao: ReportDao = mockk()
 
     @Before
     fun setUp() {
-        repository = WeatherRepositoryImpl(api, reportDao)
+        repository = WeatherRepositoryImpl(weatherApi, geocodingApi, reportDao)
     }
 
     @Test
     fun `searchCity returns list of cities on success`() = runTest {
         // Given
         val query = "London"
-        val mockResponse = mockk<com.manik.weathersnap.data.remote.dto.CitySearchDto>()
+        val mockResponse = mockk<GeocodingResponseDto>()
         coEvery { mockResponse.results } returns listOf(
             mockk {
                 coEvery { id } returns 1
@@ -36,7 +39,7 @@ class WeatherRepositoryImplTest {
                 coEvery { longitude } returns -0.12
             }
         )
-        coEvery { api.searchCity(query) } returns mockResponse
+        coEvery { geocodingApi.searchCity(query) } returns mockResponse
 
         // When
         val result = repository.searchCity(query)
@@ -50,7 +53,7 @@ class WeatherRepositoryImplTest {
     @Test
     fun `searchCity returns failure on exception`() = runTest {
         // Given
-        coEvery { api.searchCity(any()) } throws Exception("Network Error")
+        coEvery { geocodingApi.searchCity(any()) } throws Exception("Network Error")
 
         // When
         val result = repository.searchCity("Berlin")
