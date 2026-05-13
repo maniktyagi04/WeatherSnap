@@ -97,6 +97,11 @@ fun SetupNavGraph(navController: NavHostController) {
                 condition = args?.getString("condition") ?: "",
                 onBack = { navController.popBackStack() },
                 onNavigateToCamera = { navController.navigate(Routes.Camera.route) },
+                onNavigateToReports = {
+                    navController.navigate(Routes.SavedReports.route) {
+                        popUpTo(Routes.Weather.route)
+                    }
+                },
                 navController = navController
             )
         }

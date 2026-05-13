@@ -37,6 +37,7 @@ fun CreateReportScreen(
     condition: String,
     onBack: () -> Unit,
     onNavigateToCamera: () -> Unit,
+    onNavigateToReports: () -> Unit,
     navController: androidx.navigation.NavHostController,
     viewModel: CreateReportViewModel = hiltViewModel()
 ) {
@@ -177,7 +178,7 @@ fun CreateReportScreen(
 
     if (state.isSuccess) {
         LaunchedEffect(Unit) {
-            onBack()
+            onNavigateToReports()
         }
     }
 }

@@ -8,7 +8,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
@@ -87,28 +86,24 @@ fun CameraScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // Empty left for centering title
+                    Spacer(modifier = Modifier.width(48.dp))
+                    
+                    Text(
+                        text = "Custom Camera",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    )
+                    
                     IconButton(
                         onClick = onBack,
                         modifier = Modifier.background(Color.White.copy(alpha = 0.1f), CircleShape)
                     ) {
                         Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White)
                     }
-                    
-                    Surface(
-                        color = Color.White.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(20.dp)
-                    ) {
-                        Text(
-                            text = "PHOTO",
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = Color.White,
-                            fontWeight = FontWeight.Black,
-                            letterSpacing = 2.sp
-                        )
-                    }
-                    
-                    Spacer(modifier = Modifier.width(48.dp))
                 }
             }
 

@@ -1,5 +1,7 @@
 package com.manik.weathersnap.navigation
 
+import android.net.Uri
+
 sealed class Routes(val route: String) {
     data object Weather : Routes("weather")
     data object WeatherDetails : Routes("weather_details")
@@ -12,7 +14,7 @@ sealed class Routes(val route: String) {
             windSpeed: String,
             pressure: String,
             condition: String
-        ) = "create_report/$cityName/$temp/$humidity/$windSpeed/$pressure/$condition"
+        ) = "create_report/${Uri.encode(cityName)}/${Uri.encode(temp)}/${Uri.encode(humidity)}/${Uri.encode(windSpeed)}/${Uri.encode(pressure)}/${Uri.encode(condition)}"
     }
     
     data object EditReport : Routes("edit_report/{reportId}") {
