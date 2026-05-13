@@ -7,20 +7,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.manik.weathersnap.data.local.ReportEntity
+import com.manik.weathersnap.ui.savedreports.components.EmptyState
 import com.manik.weathersnap.ui.savedreports.components.ReportCard
-import com.manik.weathersnap.ui.theme.*
+import com.manik.weathersnap.ui.theme.AccentBlue
+import com.manik.weathersnap.ui.theme.AppBackground
+import com.manik.weathersnap.ui.theme.TextPrimary
+import com.manik.weathersnap.ui.theme.TextSecondary
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,14 +31,21 @@ fun TrashScreen(
     viewModel: TrashViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    var reportToDeletePermanently by remember { mutableStateOf<ReportEntity?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.snackbarEvent.collectLatest { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             CenterAlignedTopAppBar(
                 title = { 
                     Text(
-                        "TRASH", 
+                        "TRASH BIN", 
                         style = MaterialTheme.typography.titleMedium, 
                         fontWeight = FontWeight.Bold, 
                         letterSpacing = 1.sp,
@@ -56,91 +65,45 @@ fun TrashScreen(
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize().background(AppBackground)) {
             Crossfade(
-                targetState = state.isLoading,
-                label = "TrashLoading",
+                targetState = state.isLoading, 
+                label = "LoadingCrossfade",
                 modifier = Modifier.padding(innerPadding)
             ) { isLoading ->
                 if (isLoading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = AccentBlue, strokeWidth = 2.dp)
+                        CircularProgressIndicator(strokeWidth = 3.dp, color = AccentBlue)
                     }
                 } else if (state.reports.isEmpty()) {
-                    TrashEmptyState()
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("Trash is empty", style = MaterialTheme.typography.bodyLarge, color = TextPrimary)
+                            Text("Reports moved to trash will appear here", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
+                        }
+                    }
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(state.reports, key = { it.id }) { report ->
+                        items(
+                            items = state.reports,
+                            key = { it.id }
+                        ) { report ->
                             ReportCard(
                                 report = report,
+                                onEdit = { /* No edit in trash */ },
+                                onDelete = { viewModel.permanentlyDeleteReport(report) },
                                 isTrash = true,
-                                onRestore = { viewModel.restoreReport(report.id) },
-                                onDelete = { reportToDeletePermanently = report },
-                                onEdit = {}
+                                onRestore = { viewModel.restoreReport(report.id) }
                             )
                         }
+                        
+                        // Bottom spacer
+                        item { Spacer(modifier = Modifier.height(80.dp)) }
                     }
                 }
             }
         }
-    }
-
-    if (reportToDeletePermanently != null) {
-        AlertDialog(
-            onDismissRequest = { reportToDeletePermanently = null },
-            title = { Text("Delete Permanently?") },
-            text = { Text("This action cannot be undone. The report will be lost forever.") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        reportToDeletePermanently?.let { viewModel.permanentlyDeleteReport(it) }
-                        reportToDeletePermanently = null
-                    },
-                    colors = ButtonDefaults.textButtonColors(contentColor = ErrorRed)
-                ) {
-                    Text("Delete Forever", fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { reportToDeletePermanently = null }) {
-                    Text("Cancel")
-                }
-            },
-            containerColor = SurfacePrimary,
-            titleContentColor = TextPrimary,
-            textContentColor = TextSecondary
-        )
-    }
-}
-
-@Composable
-fun TrashEmptyState() {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            Icons.Default.DeleteSweep,
-            contentDescription = null,
-            modifier = Modifier.size(64.dp),
-            tint = SurfaceSecondary
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = "Your trash is empty",
-            style = MaterialTheme.typography.titleMedium,
-            color = TextPrimary,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Deleted reports are kept for 30 days.",
-            style = MaterialTheme.typography.bodySmall,
-            color = TextSecondary,
-            textAlign = TextAlign.Center
-        )
     }
 }

@@ -7,6 +7,7 @@ import com.manik.weathersnap.domain.model.City
 import com.manik.weathersnap.domain.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,12 +26,23 @@ class WeatherViewModel @Inject constructor(
 
     private val _searchQuery = MutableStateFlow("")
     
+    private val _snackbarEvent = Channel<String>()
+    val snackbarEvent = _snackbarEvent.receiveAsFlow()
+
     val recentReports: StateFlow<List<ReportEntity>> = repository.getActiveReports()
         .map { it.take(3) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
+        )
+    
+    val trashCount: StateFlow<Int> = repository.getTrashReports()
+        .map { it.size }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
         )
 
     // In-memory cache for suggestions
@@ -87,6 +99,13 @@ class WeatherViewModel @Inject constructor(
                 .onFailure {
                     _weatherUiState.value = WeatherUiState.Error(it.message ?: "Unknown Error")
                 }
+        }
+    }
+
+    fun softDeleteReport(reportId: Int) {
+        viewModelScope.launch {
+            repository.softDeleteReport(reportId)
+            _snackbarEvent.send("Report moved to trash")
         }
     }
 
