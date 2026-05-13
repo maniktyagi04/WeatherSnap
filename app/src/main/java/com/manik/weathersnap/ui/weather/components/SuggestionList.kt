@@ -22,6 +22,7 @@ import com.manik.weathersnap.ui.theme.AccentBlue
 import com.manik.weathersnap.ui.theme.SurfacePrimary
 import com.manik.weathersnap.ui.theme.TextPrimary
 import com.manik.weathersnap.ui.theme.TextSecondary
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun SuggestionList(
@@ -79,4 +80,3 @@ fun SuggestionList(
         }
     }
 }
-import androidx.compose.ui.text.font.FontWeight
