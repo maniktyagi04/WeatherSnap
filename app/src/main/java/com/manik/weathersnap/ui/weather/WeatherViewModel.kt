@@ -90,6 +90,8 @@ class WeatherViewModel @Inject constructor(
                     _weatherUiState.value = WeatherUiState.Error(it.message ?: "Unknown Error")
                 }
         }
+    }
+
     /**
      * Resets the UI state to Idle and clears the search results.
      * Used when the user navigates back from a weather result.

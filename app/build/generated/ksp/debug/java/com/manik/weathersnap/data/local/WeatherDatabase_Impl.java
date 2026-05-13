@@ -33,13 +33,13 @@ public final class WeatherDatabase_Impl extends WeatherDatabase {
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(2) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(3) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS `weather_table` (`id` INTEGER, `cityName` TEXT NOT NULL, `temperature` REAL NOT NULL, PRIMARY KEY(`id`))");
-        db.execSQL("CREATE TABLE IF NOT EXISTS `reports` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cityName` TEXT NOT NULL, `temperature` TEXT NOT NULL, `humidity` TEXT NOT NULL, `windSpeed` TEXT NOT NULL, `pressure` TEXT NOT NULL, `condition` TEXT NOT NULL, `notes` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `originalImageSize` TEXT NOT NULL, `compressedImageSize` TEXT NOT NULL, `timestamp` INTEGER NOT NULL)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `reports` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cityName` TEXT NOT NULL, `temperature` TEXT NOT NULL, `humidity` TEXT NOT NULL, `windSpeed` TEXT NOT NULL, `pressure` TEXT NOT NULL, `condition` TEXT NOT NULL, `notes` TEXT NOT NULL, `imagePath` TEXT NOT NULL, `originalImageSize` TEXT NOT NULL, `compressedImageSize` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `isDeleted` INTEGER NOT NULL, `deletedAt` INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '285462611f5745fc48c1209fa3fee9b9')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b16d176e9a970ee145a905ea533b3d33')");
       }
 
       @Override
@@ -102,7 +102,7 @@ public final class WeatherDatabase_Impl extends WeatherDatabase {
                   + " Expected:\n" + _infoWeatherTable + "\n"
                   + " Found:\n" + _existingWeatherTable);
         }
-        final HashMap<String, TableInfo.Column> _columnsReports = new HashMap<String, TableInfo.Column>(12);
+        final HashMap<String, TableInfo.Column> _columnsReports = new HashMap<String, TableInfo.Column>(14);
         _columnsReports.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsReports.put("cityName", new TableInfo.Column("cityName", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsReports.put("temperature", new TableInfo.Column("temperature", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
@@ -115,6 +115,8 @@ public final class WeatherDatabase_Impl extends WeatherDatabase {
         _columnsReports.put("originalImageSize", new TableInfo.Column("originalImageSize", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsReports.put("compressedImageSize", new TableInfo.Column("compressedImageSize", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsReports.put("timestamp", new TableInfo.Column("timestamp", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsReports.put("isDeleted", new TableInfo.Column("isDeleted", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsReports.put("deletedAt", new TableInfo.Column("deletedAt", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysReports = new HashSet<TableInfo.ForeignKey>(0);
         final HashSet<TableInfo.Index> _indicesReports = new HashSet<TableInfo.Index>(0);
         final TableInfo _infoReports = new TableInfo("reports", _columnsReports, _foreignKeysReports, _indicesReports);
@@ -126,7 +128,7 @@ public final class WeatherDatabase_Impl extends WeatherDatabase {
         }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "285462611f5745fc48c1209fa3fee9b9", "3f04bbb468e3291b99cac4013892f860");
+    }, "b16d176e9a970ee145a905ea533b3d33", "2b4cbaa8c8afba8091a837e70bded9bf");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;
